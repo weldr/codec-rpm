@@ -7,8 +7,7 @@ module RPM.Parse(parseRPM,
  where
 
 import           Conduit((=$), awaitForever, yield)
-import           Data.Attoparsec.ByteString(anyWord8, count, take, takeByteString, word8)
-import           Data.Attoparsec.Internal.Types(Parser)
+import           Data.Attoparsec.ByteString(Parser, anyWord8, count, take, takeByteString, word8)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as C
 import           Data.Conduit(Conduit)
@@ -21,13 +20,13 @@ import RPM.Internal.Numbers(asWord16, asWord32)
 import RPM.Tags(Tag, mkTag)
 import RPM.Types(Header(..), Lead(..), RPM(..), SectionHeader(..))
 
-takeWord16 :: Parser BS.ByteString Word16
+takeWord16 :: Parser Word16
 takeWord16 = asWord16 <$> take 2
 
-takeWord32 :: Parser BS.ByteString Word32
+takeWord32 :: Parser Word32
 takeWord32 = asWord32 <$> take 4
 
-parseLead :: Parser C.ByteString Lead
+parseLead :: Parser Lead
 parseLead = do
     -- Verify this is an RPM by checking the first four bytes.
     word8 0xed >> word8 0xab >> word8 0xee >> word8 0xdb
@@ -51,7 +50,7 @@ parseLead = do
                   rpmOSNum,
                   rpmSigType }
 
-parseSectionHeader :: Parser C.ByteString SectionHeader
+parseSectionHeader :: Parser SectionHeader
 parseSectionHeader = do
     -- Verify this is a header section header by checking the first three bytes.
     word8 0x8e >> word8 0xad >> word8 0xe8
@@ -75,7 +74,7 @@ parseOneTag store bs = let
  in
     mkTag store tag ty off cnt
 
-parseSection :: Parser C.ByteString Header
+parseSection :: Parser Header
 parseSection = do
     headerSectionHeader <- parseSectionHeader
     -- Grab the tags as a list of bytestrings.  We need the store before we can process the tags, as
@@ -91,7 +90,7 @@ parseSection = do
                     headerTags,
                     headerStore }
 
-parseRPM :: Parser C.ByteString RPM 
+parseRPM :: Parser RPM
 parseRPM = do
     -- First comes the (mostly useless) lead.
     rpmLead <- parseLead
