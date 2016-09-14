@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
@@ -6,6 +7,9 @@ module RPM.Parse(parseRPM,
                  parseRPMC)
  where
 
+#if !MIN_VERSION_base(4,8,0)
+import           Control.Applicative((<$>))
+#endif
 import           Conduit((=$), awaitForever, yield)
 import           Data.Attoparsec.ByteString(Parser, anyWord8, count, take, takeByteString, word8)
 import qualified Data.ByteString as BS
