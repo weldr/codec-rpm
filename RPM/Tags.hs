@@ -20,6 +20,8 @@ import           Text.PrettyPrint(text)
 
 import RPM.Internal.Numbers
 
+{-# ANN module "HLint: ignore Use camelCase" #-}
+
 data Tag = HeaderImage              NullTag Word32 Word32
          | HeaderSignatures         NullTag Word32 Word32
          | HeaderImmutable          NullTag Word32 Word32
@@ -71,13 +73,13 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | PreUn                    StringTag Word32 Word32
          | PostUn                   StringTag Word32 Word32
          | OldFileNames             StringArrayTag Word32 Word32
-         | FileSizes                Word32Tag Word32 Word32
-         | FileStates               CharTag Word32 Word32
-         | FileModes                Word16Tag Word32 Word32
-         | FileUIDs                 Word32Tag Word32 Word32
-         | FileGIDs                 Word32Tag Word32 Word32
-         | FileRDevs                Word16Tag Word32 Word32
-         | FileMTimes               Word32Tag Word32 Word32
+         | FileSizes                [Word32Tag] Word32 Word32
+         | FileStates               [CharTag] Word32 Word32
+         | FileModes                [Word16Tag] Word32 Word32
+         | FileUIDs                 [Word32Tag] Word32 Word32
+         | FileGIDs                 [Word32Tag] Word32 Word32
+         | FileRDevs                [Word16Tag] Word32 Word32
+         | FileMTimes               [Word32Tag] Word32 Word32
          | FileMD5s                 StringArrayTag Word32 Word32
          | FileLinkTos              StringArrayTag Word32 Word32
          | FileFlags                Word32Tag Word32 Word32
@@ -88,14 +90,14 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | Exclusive                NullTag Word32 Word32
          | Icon                     BinaryTag Word32 Word32
          | SourceRPM                StringTag Word32 Word32
-         | FileVerifyFlags          Word32Tag Word32 Word32
+         | FileVerifyFlags          [Word32Tag] Word32 Word32
          | ArchiveSize              Word32Tag Word32 Word32
          | ProvideName              StringArrayTag Word32 Word32
-         | RequireFlags             Word32Tag Word32 Word32
+         | RequireFlags             [Word32Tag] Word32 Word32
          | RequireName              StringArrayTag Word32 Word32
          | RequireVersion           StringArrayTag Word32 Word32
-         | NoSource                 Word32Tag Word32 Word32
-         | NoPatch                  Word32Tag Word32 Word32
+         | NoSource                 [Word32Tag] Word32 Word32
+         | NoPatch                  [Word32Tag] Word32 Word32
          | ConflictFlags            Word32Tag Word32 Word32
          | ConflictName             StringArrayTag Word32 Word32
          | ConflictVersion          StringArrayTag Word32 Word32
@@ -111,10 +113,10 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | TriggerScripts           StringArrayTag Word32 Word32
          | TriggerName              StringArrayTag Word32 Word32
          | TriggerVersion           StringArrayTag Word32 Word32
-         | TriggerFlags             Word32Tag Word32 Word32
-         | TriggerIndex             Word32Tag Word32 Word32
+         | TriggerFlags             [Word32Tag] Word32 Word32
+         | TriggerIndex             [Word32Tag] Word32 Word32
          | VerifyScript             StringTag Word32 Word32
-         | ChangeLogTime            Word32Tag Word32 Word32
+         | ChangeLogTime            [Word32Tag] Word32 Word32
          | ChangeLogName            StringArrayTag Word32 Word32
          | ChangeLogText            StringArrayTag Word32 Word32
          | BrokenMD5                NullTag Word32 Word32
@@ -129,8 +131,8 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | TriggerScriptProg        StringArrayTag Word32 Word32
          | DocDir                   NullTag Word32 Word32
          | Cookie                   StringTag Word32 Word32
-         | FileDevices              Word32Tag Word32 Word32
-         | FileINodes               Word32Tag Word32 Word32
+         | FileDevices              [Word32Tag] Word32 Word32
+         | FileINodes               [Word32Tag] Word32 Word32
          | FileLangs                StringArrayTag Word32 Word32
          | Prefixes                 StringArrayTag Word32 Word32
          | InstPrefixes             StringArrayTag Word32 Word32
@@ -146,14 +148,14 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | BuildRequires            NullTag Word32 Word32
          | BuildConflicts           NullTag Word32 Word32
          | BuildMacros              NullTag Word32 Word32
-         | ProvideFlags             Word32Tag Word32 Word32
+         | ProvideFlags             [Word32Tag] Word32 Word32
          | ProvideVersion           StringArrayTag Word32 Word32
-         | ObsoleteFlags            Word32Tag Word32 Word32
+         | ObsoleteFlags            [Word32Tag] Word32 Word32
          | ObsoleteVersion          StringArrayTag Word32 Word32
-         | DirIndexes               Word32Tag Word32 Word32
+         | DirIndexes               [Word32Tag] Word32 Word32
          | BaseNames                StringArrayTag Word32 Word32
          | DirNames                 StringArrayTag Word32 Word32
-         | OrigDirIndexes           Word32Tag Word32 Word32
+         | OrigDirIndexes           [Word32Tag] Word32 Word32
          | OrigBaseNames            StringArrayTag Word32 Word32
          | OrigDirNames             StringArrayTag Word32 Word32
          | OptFlags                 StringTag Word32 Word32
@@ -168,18 +170,18 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | RHNPlatform              StringTag Word32 Word32
          | Platform                 StringTag Word32 Word32
          | PatchesName              StringArrayTag Word32 Word32
-         | PatchesFlags             Word32Tag Word32 Word32
+         | PatchesFlags             [Word32Tag] Word32 Word32
          | PatchesVersion           StringArrayTag Word32 Word32
          | CacheCTime               Word32Tag Word32 Word32
          | CachePkgPath             StringTag Word32 Word32
          | CachePkgSize             Word32Tag Word32 Word32
          | CachePkgMTime            Word32Tag Word32 Word32
-         | FileColors               Word32Tag Word32 Word32
-         | FileClass                Word32Tag Word32 Word32
+         | FileColors               [Word32Tag] Word32 Word32
+         | FileClass                [Word32Tag] Word32 Word32
          | ClassDict                StringArrayTag Word32 Word32
-         | FileDependsX             Word32Tag Word32 Word32
-         | FileDependsN             Word32Tag Word32 Word32
-         | DependsDict              Word32Tag Word32 Word32
+         | FileDependsX             [Word32Tag] Word32 Word32
+         | FileDependsN             [Word32Tag] Word32 Word32
+         | DependsDict              [Word32Tag] Word32 Word32
          | SourcePkgID              BinaryTag Word32 Word32
          | FileContexts             StringArrayTag Word32 Word32
          | FSContexts               StringArrayTag Word32 Word32
@@ -192,11 +194,11 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | DistTag                  StringTag Word32 Word32
          | OldSuggestsName          StringArrayTag Word32 Word32
          | OldSuggestsVersion       StringArrayTag Word32 Word32
-         | OldSuggestsFlags         Word32Tag Word32 Word32
+         | OldSuggestsFlags         [Word32Tag] Word32 Word32
          | OldEnhancesName          StringArrayTag Word32 Word32
          | OldEnhancesVersion       StringArrayTag Word32 Word32
-         | OldEnhancesFlags         Word32Tag Word32 Word32
-         | Priority                 Word32Tag Word32 Word32
+         | OldEnhancesFlags         [Word32Tag] Word32 Word32
+         | Priority                 [Word32Tag] Word32 Word32
          | CVSID                    StringTag Word32 Word32
          | BLinkPkgID               StringArrayTag Word32 Word32
          | BLinkHdrID               StringArrayTag Word32 Word32
@@ -208,10 +210,10 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | TriggerPreIn             NullTag Word32 Word32
          | BuildSuggests            NullTag Word32 Word32
          | BuildEnhances            NullTag Word32 Word32
-         | ScriptStates             Word32Tag Word32 Word32
-         | ScriptMetrics            Word32Tag Word32 Word32
+         | ScriptStates             [Word32Tag] Word32 Word32
+         | ScriptMetrics            [Word32Tag] Word32 Word32
          | BuildCPUClock            Word32Tag Word32 Word32
-         | FileDigestAlgos          Word32Tag Word32 Word32
+         | FileDigestAlgos          [Word32Tag] Word32 Word32
          | Variants                 StringArrayTag Word32 Word32
          | XMajor                   Word32Tag Word32 Word32
          | XMinor                   Word32Tag Word32 Word32
@@ -221,12 +223,12 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | PackageColor             Word32Tag Word32 Word32
          | PackagePrefColor         Word32Tag Word32 Word32
          | XattrsDict               StringArrayTag Word32 Word32
-         | FileXattrsx              Word32Tag Word32 Word32
+         | FileXattrsx              [Word32Tag] Word32 Word32
          | DepAttrsDict             StringArrayTag Word32 Word32
-         | ConflictAttrsx           Word32Tag Word32 Word32
-         | ObsoleteAttrsx           Word32Tag Word32 Word32
-         | ProvideAttrsx            Word32Tag Word32 Word32
-         | RequireAttrsx            Word32Tag Word32 Word32
+         | ConflictAttrsx           [Word32Tag] Word32 Word32
+         | ObsoleteAttrsx           [Word32Tag] Word32 Word32
+         | ProvideAttrsx            [Word32Tag] Word32 Word32
+         | RequireAttrsx            [Word32Tag] Word32 Word32
          | BuildProvides            NullTag Word32 Word32
          | BuildObsoletes           NullTag Word32 Word32
          | DBInstance               Word32Tag Word32 Word32
@@ -236,11 +238,11 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | FileProvide              StringArrayTag Word32 Word32
          | FileRequire              StringArrayTag Word32 Word32
          | FSNames                  StringArrayTag Word32 Word32
-         | FSSizes                  Word64Tag Word32 Word32
+         | FSSizes                  [Word64Tag] Word32 Word32
          | TriggerConds             StringArrayTag Word32 Word32
          | TriggerType              StringArrayTag Word32 Word32
          | OrigFileNames            StringArrayTag Word32 Word32
-         | LongFileSizes            Word64Tag Word32 Word32
+         | LongFileSizes            [Word64Tag] Word32 Word32
          | LongSize                 Word64Tag Word32 Word32
          | FileCaps                 StringArrayTag Word32 Word32
          | FileDigestAlgo           Word32Tag Word32 Word32
@@ -259,16 +261,16 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | PreTransFlags            Word32Tag Word32 Word32
          | PostTransFlags           Word32Tag Word32 Word32
          | VerifyScriptFlags        Word32Tag Word32 Word32
-         | TriggerScriptFlags       Word32Tag Word32 Word32
+         | TriggerScriptFlags       [Word32Tag] Word32 Word32
          | Collections              StringArrayTag Word32 Word32
          | PolicyNames              StringArrayTag Word32 Word32
          | PolicyTypes              StringArrayTag Word32 Word32
-         | PolicyTypesIndexes       Word32Tag Word32 Word32
-         | PolicyFlags              Word32Tag Word32 Word32
+         | PolicyTypesIndexes       [Word32Tag] Word32 Word32
+         | PolicyFlags              [Word32Tag] Word32 Word32
          | PolicyVCS                StringTag Word32 Word32
          | OrderName                StringArrayTag Word32 Word32
          | OrderVersion             StringArrayTag Word32 Word32
-         | OrderFlags               Word32Tag Word32 Word32
+         | OrderFlags               [Word32Tag] Word32 Word32
          | MSSFManifest             StringArrayTag Word32 Word32
          | MSSFDomain               StringArrayTag Word32 Word32
          | InstFileNames            StringArrayTag Word32 Word32
@@ -276,19 +278,19 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | ProvideNEVRs             StringArrayTag Word32 Word32
          | ObsoleteNEVRs            StringArrayTag Word32 Word32
          | ConflictNEVRs            StringArrayTag Word32 Word32
-         | FileNLinks               Word32Tag Word32 Word32
+         | FileNLinks               [Word32Tag] Word32 Word32
          | RecommendName            StringArrayTag Word32 Word32
          | RecommendVersion         StringArrayTag Word32 Word32
-         | RecommendFlags           Word32Tag Word32 Word32
+         | RecommendFlags           [Word32Tag] Word32 Word32
          | SuggestName              StringArrayTag Word32 Word32
          | SuggestVersion           StringArrayTag Word32 Word32
-         | SuggestFlags             Word32Tag Word32 Word32
+         | SuggestFlags             [Word32Tag] Word32 Word32
          | SupplementName           StringArrayTag Word32 Word32
          | SupplementVersion        StringArrayTag Word32 Word32
-         | SupplementFlags          Word32Tag Word32 Word32
+         | SupplementFlags          [Word32Tag] Word32 Word32
          | EnhanceName              StringArrayTag Word32 Word32
          | EnhanceVersion           StringArrayTag Word32 Word32
-         | EnhanceFlags             Word32Tag Word32 Word32
+         | EnhanceFlags             [Word32Tag] Word32 Word32
          | RecommendNEVRs           StringArrayTag Word32 Word32
          | SuggestNEVRs             StringArrayTag Word32 Word32
          | SupplementNEVRs          StringArrayTag Word32 Word32
@@ -299,24 +301,24 @@ data Tag = HeaderImage              NullTag Word32 Word32
          | FileTriggerPostUn        NullTag Word32 Word32
          | FileTriggerScripts       StringArrayTag Word32 Word32
          | FileTriggerScriptProg    StringArrayTag Word32 Word32
-         | FileTriggerScriptFlags   Word32Tag Word32 Word32
+         | FileTriggerScriptFlags   [Word32Tag] Word32 Word32
          | FileTriggerName          StringArrayTag Word32 Word32
-         | FileTriggerIndex         Word32Tag Word32 Word32
+         | FileTriggerIndex         [Word32Tag] Word32 Word32
          | FileTriggerVersion       StringArrayTag Word32 Word32
-         | FileTriggerFlags         Word32Tag Word32 Word32
+         | FileTriggerFlags         [Word32Tag] Word32 Word32
          | TransFileTriggerIn       NullTag Word32 Word32
          | TransFileTriggerUn       NullTag Word32 Word32
          | TransFileTriggerPostUn   NullTag Word32 Word32
          | TransFileTriggerScripts  StringArrayTag Word32 Word32
          | TransFileTriggerScriptProg    StringArrayTag Word32 Word32
-         | TransFileTriggerScriptFlags   Word32Tag Word32 Word32
+         | TransFileTriggerScriptFlags   [Word32Tag] Word32 Word32
          | TransFileTriggerName     StringArrayTag Word32 Word32
-         | TransFileTriggerIndex    Word32Tag Word32 Word32
+         | TransFileTriggerIndex    [Word32Tag] Word32 Word32
          | TransFileTriggerVersion  StringArrayTag Word32 Word32
-         | TransFileTriggerFlags    Word32Tag Word32 Word32
+         | TransFileTriggerFlags    [Word32Tag] Word32 Word32
          | RemovePathPostFixes      StringTag Word32 Word32
-         | FileTriggerPriorities    Word32Tag Word32 Word32
-         | TransFileTriggerPriorities    Word32Tag Word32 Word32
+         | FileTriggerPriorities    [Word32Tag] Word32 Word32
+         | TransFileTriggerPriorities    [Word32Tag] Word32 Word32
          | FileTriggerConds         StringArrayTag Word32 Word32
          | FileTriggerType          StringArrayTag Word32 Word32
          | TransFileTriggerConds    StringArrayTag Word32 Word32
@@ -337,16 +339,16 @@ data    NullTag         = NullTag
 newtype CharTag         = CharTag Char
  deriving(Eq, Show)
 
-newtype Word8Tag        = Word8Tag [Word8]
+newtype Word8Tag        = Word8Tag Word8
  deriving(Eq, Show)
 
-newtype Word16Tag       = Word16Tag [Word16]
+newtype Word16Tag       = Word16Tag Word16
  deriving(Eq, Show)
 
-newtype Word32Tag       = Word32Tag [Word32]
+newtype Word32Tag       = Word32Tag Word32
  deriving(Eq, Show)
 
-newtype Word64Tag       = Word64Tag [Word64]
+newtype Word64Tag       = Word64Tag Word64
  deriving(Eq, Show)
 
 newtype StringTag       = StringTag String
@@ -370,7 +372,7 @@ mkTag store tag ty offset count = case tag of
     100     -> maker mkStringArrayTag   >>= \v -> Just $ HeaderI18NTable v offset count
 
     256     -> maker mkNullTag          >>= \v -> Just $ SigBase v offset count
-    257     -> maker mkWord32Tag        >>= \v -> Just $ SigSize v offset count
+    257     -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ SigSize v offset count
     258     -> maker mkNullTag          >>= \v -> Just $ SigLEMD5_1 v offset count
     259     -> maker mkBinaryTag        >>= \v -> Just $ SigPGP v offset count
     260     -> maker mkNullTag          >>= \v -> Just $ SigLEMD5_2 v offset count
@@ -383,19 +385,19 @@ mkTag store tag ty offset count = case tag of
     267     -> maker mkBinaryTag        >>= \v -> Just $ DSAHeader v offset count
     268     -> maker mkBinaryTag        >>= \v -> Just $ RSAHeader v offset count
     269     -> maker mkStringTag        >>= \v -> Just $ SHA1Header v offset count
-    270     -> maker mkWord64Tag        >>= \v -> Just $ LongSigSize v offset count
-    271     -> maker mkWord64Tag        >>= \v -> Just $ LongArchiveSize v offset count
+    270     -> maker mkWord64Tag        >>= unlist >>= \v -> Just $ LongSigSize v offset count
+    271     -> maker mkWord64Tag        >>= unlist >>= \v -> Just $ LongArchiveSize v offset count
 
     1000    -> maker mkStringTag        >>= \v -> Just $ Name v offset count
     1001    -> maker mkStringTag        >>= \v -> Just $ Version v offset count
     1002    -> maker mkStringTag        >>= \v -> Just $ Release v offset count
-    1003    -> maker mkWord32Tag        >>= \v -> Just $ Epoch v offset count
+    1003    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ Epoch v offset count
     1004    -> maker mkI18NStringTag    >>= \v -> Just $ Summary v offset count
     1005    -> maker mkI18NStringTag    >>= \v -> Just $ Description v offset count
-    1006    -> maker mkWord32Tag        >>= \v -> Just $ BuildTime v offset count
+    1006    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ BuildTime v offset count
     1007    -> maker mkStringTag        >>= \v -> Just $ BuildHost v offset count
-    1008    -> maker mkWord32Tag        >>= \v -> Just $ InstallTime v offset count
-    1009    -> maker mkWord32Tag        >>= \v -> Just $ Size v offset count
+    1008    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ InstallTime v offset count
+    1009    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ Size v offset count
     1010    -> maker mkStringTag        >>= \v -> Just $ Distribution v offset count
     1011    -> maker mkStringTag        >>= \v -> Just $ Vendor v offset count
     1012    -> maker mkBinaryTag        >>= \v -> Just $ GIF v offset count
@@ -423,7 +425,7 @@ mkTag store tag ty offset count = case tag of
     1034    -> maker mkWord32Tag        >>= \v -> Just $ FileMTimes v offset count
     1035    -> maker mkStringArrayTag   >>= \v -> Just $ FileMD5s v offset count
     1036    -> maker mkStringArrayTag   >>= \v -> Just $ FileLinkTos v offset count
-    1037    -> maker mkWord32Tag        >>= \v -> Just $ FileFlags v offset count
+    1037    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ FileFlags v offset count
     1038    -> maker mkNullTag          >>= \v -> Just $ Root v offset count
     1039    -> maker mkStringArrayTag   >>= \v -> Just $ FileUserName v offset count
     1040    -> maker mkStringArrayTag   >>= \v -> Just $ FileGroupName v offset count
@@ -432,14 +434,14 @@ mkTag store tag ty offset count = case tag of
     1043    -> maker mkBinaryTag        >>= \v -> Just $ Icon v offset count
     1044    -> maker mkStringTag        >>= \v -> Just $ SourceRPM v offset count
     1045    -> maker mkWord32Tag        >>= \v -> Just $ FileVerifyFlags v offset count
-    1046    -> maker mkWord32Tag        >>= \v -> Just $ ArchiveSize v offset count
+    1046    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ ArchiveSize v offset count
     1047    -> maker mkStringArrayTag   >>= \v -> Just $ ProvideName v offset count
     1048    -> maker mkWord32Tag        >>= \v -> Just $ RequireFlags v offset count
     1049    -> maker mkStringArrayTag   >>= \v -> Just $ RequireName v offset count
     1050    -> maker mkStringArrayTag   >>= \v -> Just $ RequireVersion v offset count
     1051    -> maker mkWord32Tag        >>= \v -> Just $ NoSource v offset count
     1052    -> maker mkWord32Tag        >>= \v -> Just $ NoPatch v offset count
-    1053    -> maker mkWord32Tag        >>= \v -> Just $ ConflictFlags v offset count
+    1053    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ ConflictFlags v offset count
     1054    -> maker mkStringArrayTag   >>= \v -> Just $ ConflictName v offset count
     1055    -> maker mkStringArrayTag   >>= \v -> Just $ ConflictVersion v offset count
     1056    -> maker mkStringTag        >>= \v -> Just $ DefaultPrefix v offset count
@@ -482,8 +484,8 @@ mkTag store tag ty offset count = case tag of
     1102    -> maker mkNullTag          >>= \v -> Just $ TriggerPostUn v offset count
     1103    -> maker mkNullTag          >>= \v -> Just $ AutoReq v offset count
     1104    -> maker mkNullTag          >>= \v -> Just $ AutoProv v offset count
-    1105    -> maker mkWord32Tag        >>= \v -> Just $ Capability v offset count
-    1106    -> maker mkWord32Tag        >>= \v -> Just $ SourcePackage v offset count
+    1105    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ Capability v offset count
+    1106    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ SourcePackage v offset count
     1107    -> maker mkNullTag          >>= \v -> Just $ OldOrigFileNames v offset count
     1108    -> maker mkNullTag          >>= \v -> Just $ BuildPreReq v offset count
     1109    -> maker mkNullTag          >>= \v -> Just $ BuildRequires v offset count
@@ -504,19 +506,19 @@ mkTag store tag ty offset count = case tag of
     1124    -> maker mkStringTag        >>= \v -> Just $ PayloadFormat v offset count
     1125    -> maker mkStringTag        >>= \v -> Just $ PayloadCompressor v offset count
     1126    -> maker mkStringTag        >>= \v -> Just $ PayloadFlags v offset count
-    1127    -> maker mkWord32Tag        >>= \v -> Just $ InstallColor v offset count
-    1128    -> maker mkWord32Tag        >>= \v -> Just $ InstallTID v offset count
-    1129    -> maker mkWord32Tag        >>= \v -> Just $ RemoveTID v offset count
+    1127    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ InstallColor v offset count
+    1128    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ InstallTID v offset count
+    1129    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ RemoveTID v offset count
     1130    -> maker mkNullTag          >>= \v -> Just $ SHA1RHN v offset count
     1131    -> maker mkStringTag        >>= \v -> Just $ RHNPlatform v offset count
     1132    -> maker mkStringTag        >>= \v -> Just $ Platform v offset count
     1133    -> maker mkStringArrayTag   >>= \v -> Just $ PatchesName v offset count
     1134    -> maker mkWord32Tag        >>= \v -> Just $ PatchesFlags v offset count
     1135    -> maker mkStringArrayTag   >>= \v -> Just $ PatchesVersion v offset count
-    1136    -> maker mkWord32Tag        >>= \v -> Just $ CacheCTime v offset count
+    1136    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ CacheCTime v offset count
     1137    -> maker mkStringTag        >>= \v -> Just $ CachePkgPath v offset count
-    1138    -> maker mkWord32Tag        >>= \v -> Just $ CachePkgSize v offset count
-    1139    -> maker mkWord32Tag        >>= \v -> Just $ CachePkgMTime v offset count
+    1138    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ CachePkgSize v offset count
+    1139    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ CachePkgMTime v offset count
     1140    -> maker mkWord32Tag        >>= \v -> Just $ FileColors v offset count
     1141    -> maker mkWord32Tag        >>= \v -> Just $ FileClass v offset count
     1142    -> maker mkStringArrayTag   >>= \v -> Just $ ClassDict v offset count
@@ -553,16 +555,16 @@ mkTag store tag ty offset count = case tag of
     1173    -> maker mkNullTag          >>= \v -> Just $ BuildEnhances v offset count
     1174    -> maker mkWord32Tag        >>= \v -> Just $ ScriptStates v offset count
     1175    -> maker mkWord32Tag        >>= \v -> Just $ ScriptMetrics v offset count
-    1176    -> maker mkWord32Tag        >>= \v -> Just $ BuildCPUClock v offset count
+    1176    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ BuildCPUClock v offset count
     1177    -> maker mkWord32Tag        >>= \v -> Just $ FileDigestAlgos v offset count
     1178    -> maker mkStringArrayTag   >>= \v -> Just $ Variants v offset count
-    1179    -> maker mkWord32Tag        >>= \v -> Just $ XMajor v offset count
-    1180    -> maker mkWord32Tag        >>= \v -> Just $ XMinor v offset count
+    1179    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ XMajor v offset count
+    1180    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ XMinor v offset count
     1181    -> maker mkStringTag        >>= \v -> Just $ RepoTag v offset count
     1182    -> maker mkStringArrayTag   >>= \v -> Just $ Keywords v offset count
     1183    -> maker mkStringArrayTag   >>= \v -> Just $ BuildPlatforms v offset count
-    1184    -> maker mkWord32Tag        >>= \v -> Just $ PackageColor v offset count
-    1185    -> maker mkWord32Tag        >>= \v -> Just $ PackagePrefColor v offset count
+    1184    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PackageColor v offset count
+    1185    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PackagePrefColor v offset count
     1186    -> maker mkStringArrayTag   >>= \v -> Just $ XattrsDict v offset count
     1187    -> maker mkWord32Tag        >>= \v -> Just $ FileXattrsx v offset count
     1188    -> maker mkStringArrayTag   >>= \v -> Just $ DepAttrsDict v offset count
@@ -572,7 +574,7 @@ mkTag store tag ty offset count = case tag of
     1192    -> maker mkWord32Tag        >>= \v -> Just $ RequireAttrsx v offset count
     1193    -> maker mkNullTag          >>= \v -> Just $ BuildProvides v offset count
     1194    -> maker mkNullTag          >>= \v -> Just $ BuildObsoletes v offset count
-    1195    -> maker mkWord32Tag        >>= \v -> Just $ DBInstance v offset count
+    1195    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ DBInstance v offset count
     1196    -> maker mkStringTag        >>= \v -> Just $ NVRA v offset count
 
     5000    -> maker mkStringArrayTag   >>= \v -> Just $ FileNames v offset count
@@ -584,24 +586,24 @@ mkTag store tag ty offset count = case tag of
     5006    -> maker mkStringArrayTag   >>= \v -> Just $ TriggerType v offset count
     5007    -> maker mkStringArrayTag   >>= \v -> Just $ OrigFileNames v offset count
     5008    -> maker mkWord64Tag        >>= \v -> Just $ LongFileSizes v offset count
-    5009    -> maker mkWord64Tag        >>= \v -> Just $ LongSize v offset count
+    5009    -> maker mkWord64Tag        >>= unlist >>= \v -> Just $ LongSize v offset count
     5010    -> maker mkStringArrayTag   >>= \v -> Just $ FileCaps v offset count
-    5011    -> maker mkWord32Tag        >>= \v -> Just $ FileDigestAlgo v offset count
+    5011    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ FileDigestAlgo v offset count
     5012    -> maker mkStringTag        >>= \v -> Just $ BugURL v offset count
     5013    -> maker mkStringTag        >>= \v -> Just $ EVR v offset count
     5014    -> maker mkStringTag        >>= \v -> Just $ NVR v offset count
     5015    -> maker mkStringTag        >>= \v -> Just $ NEVR v offset count
     5016    -> maker mkStringTag        >>= \v -> Just $ NEVRA v offset count
-    5017    -> maker mkWord32Tag        >>= \v -> Just $ HeaderColor v offset count
-    5018    -> maker mkWord32Tag        >>= \v -> Just $ Verbose v offset count
-    5019    -> maker mkWord32Tag        >>= \v -> Just $ EpochNum v offset count
-    5020    -> maker mkWord32Tag        >>= \v -> Just $ PreInFlags v offset count
-    5021    -> maker mkWord32Tag        >>= \v -> Just $ PostInFlags v offset count
-    5022    -> maker mkWord32Tag        >>= \v -> Just $ PreUnFlags v offset count
-    5023    -> maker mkWord32Tag        >>= \v -> Just $ PostUnFlags v offset count
-    5024    -> maker mkWord32Tag        >>= \v -> Just $ PreTransFlags v offset count
-    5025    -> maker mkWord32Tag        >>= \v -> Just $ PostTransFlags v offset count
-    5026    -> maker mkWord32Tag        >>= \v -> Just $ VerifyScriptFlags v offset count
+    5017    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ HeaderColor v offset count
+    5018    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ Verbose v offset count
+    5019    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ EpochNum v offset count
+    5020    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PreInFlags v offset count
+    5021    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PostInFlags v offset count
+    5022    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PreUnFlags v offset count
+    5023    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PostUnFlags v offset count
+    5024    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PreTransFlags v offset count
+    5025    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PostTransFlags v offset count
+    5026    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ VerifyScriptFlags v offset count
     5027    -> maker mkWord32Tag        >>= \v -> Just $ TriggerScriptFlags v offset count
     5029    -> maker mkStringArrayTag   >>= \v -> Just $ Collections v offset count
     5030    -> maker mkStringArrayTag   >>= \v -> Just $ PolicyNames v offset count
@@ -665,42 +667,47 @@ mkTag store tag ty offset count = case tag of
     5088    -> maker mkStringArrayTag   >>= \v -> Just $ TransFileTriggerConds v offset count
     5089    -> maker mkStringArrayTag   >>= \v -> Just $ TransFileTriggerType v offset count
     5090    -> maker mkStringArrayTag   >>= \v -> Just $ FileSignatures v offset count
-    5091    -> maker mkWord32Tag        >>= \v -> Just $ FileSignatureLength v offset count
+    5091    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ FileSignatureLength v offset count
 
     _       -> Nothing
  where
     maker fn = fn store ty offset count
 
+    unlist :: [a] -> Maybe a
+    unlist (a:_) = Just a
+    unlist _     = Nothing
+
 mkNullTag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe NullTag
 mkNullTag _ ty _ _ | ty == 0    = Just NullTag
                    | otherwise  = Nothing
 
-mkCharTag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe CharTag
-mkCharTag store ty offset _ | ty == 1   = Just $ CharTag $ C.head $ BS.take 1 start
-                            | otherwise = Nothing
+mkCharTag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [CharTag]
+mkCharTag store ty offset count | ty == 1   = Just $ map CharTag $ C.unpack $ BS.take count' start
+                                | otherwise = Nothing
  where
+    count' = fromIntegral count
     start = BS.drop (fromIntegral offset) store
 
-mkWord8Tag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe Word8Tag
-mkWord8Tag store ty offset count | ty == 2      = Just $ Word8Tag $ readWords 1 asWord8 start count
+mkWord8Tag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word8Tag]
+mkWord8Tag store ty offset count | ty == 2      = Just $ map Word8Tag $ readWords 1 asWord8 start count
                                  | otherwise    = Nothing
  where
     start = BS.drop (fromIntegral offset) store
 
-mkWord16Tag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe Word16Tag
-mkWord16Tag store ty offset count | ty == 3     = Just $ Word16Tag $ readWords 2 asWord16 start count
+mkWord16Tag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word16Tag]
+mkWord16Tag store ty offset count | ty == 3     = Just $ map Word16Tag $ readWords 2 asWord16 start count
                                   | otherwise   = Nothing
  where
     start  = BS.drop (fromIntegral offset) store
 
-mkWord32Tag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe Word32Tag
-mkWord32Tag store ty offset count | ty == 4     = Just $ Word32Tag $ readWords 4 asWord32 start count
+mkWord32Tag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word32Tag]
+mkWord32Tag store ty offset count | ty == 4     = Just $ map Word32Tag $ readWords 4 asWord32 start count
                                   | otherwise   = Nothing
  where
     start  = BS.drop (fromIntegral offset) store
 
-mkWord64Tag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe Word64Tag
-mkWord64Tag store ty offset count | ty == 5     = Just $ Word64Tag $ readWords 8 asWord64 start count
+mkWord64Tag :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word64Tag]
+mkWord64Tag store ty offset count | ty == 5     = Just $ map Word64Tag $ readWords 8 asWord64 start count
                                   | otherwise   = Nothing
  where
     start  = BS.drop (fromIntegral offset) store
