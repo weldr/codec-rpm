@@ -13,13 +13,13 @@ library
 
     other-modules:      RPM.Internal.Numbers
 
-    build-depends:      attoparsec,
-                        base >= 4.8 && < 4.9,
+    build-depends:      attoparsec >= 0.12.1.4,
+                        base >= 4.7 && < 4.9,
                         bytestring >= 0.10 && < 0.11,
                         conduit,
                         conduit-combinators,
                         conduit-extra,
-                        mtl,
+                        mtl >= 2.2.1,
                         pretty,
                         resourcet
 
@@ -32,7 +32,7 @@ executable inspect
 
     build-depends:      rpm,
                         attoparsec,
-                        base >= 4.8 && < 4.9,
+                        base >= 4.7 && < 4.9,
                         bytestring >= 0.10 && < 0.11,
                         conduit,
                         conduit-combinators,
@@ -51,7 +51,7 @@ executable unrpm
 
     build-depends:      rpm,
                         attoparsec,
-                        base >= 4.8 && < 4.9,
+                        base >= 4.7 && < 4.9,
                         bytestring >= 0.10 && < 0.11,
                         conduit,
                         conduit-combinators,
