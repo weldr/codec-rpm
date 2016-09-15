@@ -22,7 +22,13 @@ import RPM.Internal.Numbers
 
 {-# ANN module "HLint: ignore Use camelCase" #-}
 
-data Tag = HeaderImage              NullTag Word32 Word32
+data Tag = DEPRECATED               Tag
+         | INTERNAL                 Tag
+         | OBSOLETE                 Tag
+         | UNIMPLEMENTED            Tag
+         | UNUSED                   Tag
+
+         | HeaderImage              NullTag Word32 Word32
          | HeaderSignatures         NullTag Word32 Word32
          | HeaderImmutable          NullTag Word32 Word32
          | HeaderRegions            NullTag Word32 Word32
@@ -373,14 +379,14 @@ mkTag store tag ty offset count = case tag of
 
     256     -> maker mkNullTag          >>= \v -> Just $ SigBase v offset count
     257     -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ SigSize v offset count
-    258     -> maker mkNullTag          >>= \v -> Just $ SigLEMD5_1 v offset count
+    258     -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ SigLEMD5_1 v offset count
     259     -> maker mkBinaryTag        >>= \v -> Just $ SigPGP v offset count
-    260     -> maker mkNullTag          >>= \v -> Just $ SigLEMD5_2 v offset count
+    260     -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ SigLEMD5_2 v offset count
     261     -> maker mkBinaryTag        >>= \v -> Just $ SigMD5 v offset count
     262     -> maker mkBinaryTag        >>= \v -> Just $ SigGPG v offset count
-    263     -> maker mkNullTag          >>= \v -> Just $ SigPGP5 v offset count
-    264     -> maker mkNullTag          >>= \v -> Just $ SigBadSHA1_1 v offset count
-    265     -> maker mkNullTag          >>= \v -> Just $ SigBadSHA1_2 v offset count
+    263     -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ SigPGP5 v offset count
+    264     -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ SigBadSHA1_1 v offset count
+    265     -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ SigBadSHA1_2 v offset count
     266     -> maker mkStringArrayTag   >>= \v -> Just $ PubKeys v offset count
     267     -> maker mkBinaryTag        >>= \v -> Just $ DSAHeader v offset count
     268     -> maker mkBinaryTag        >>= \v -> Just $ RSAHeader v offset count
@@ -405,7 +411,7 @@ mkTag store tag ty offset count = case tag of
     1014    -> maker mkStringTag        >>= \v -> Just $ License v offset count
     1015    -> maker mkStringTag        >>= \v -> Just $ Packager v offset count
     1016    -> maker mkI18NStringTag    >>= \v -> Just $ Group v offset count
-    1017    -> maker mkStringArrayTag   >>= \v -> Just $ ChangeLog v offset count
+    1017    -> maker mkStringArrayTag   >>= \v -> Just $ INTERNAL $ ChangeLog v offset count
     1018    -> maker mkStringArrayTag   >>= \v -> Just $ Source v offset count
     1019    -> maker mkStringArrayTag   >>= \v -> Just $ Patch v offset count
     1020    -> maker mkStringTag        >>= \v -> Just $ URL v offset count
@@ -415,22 +421,22 @@ mkTag store tag ty offset count = case tag of
     1024    -> maker mkStringTag        >>= \v -> Just $ PostIn v offset count
     1025    -> maker mkStringTag        >>= \v -> Just $ PreUn v offset count
     1026    -> maker mkStringTag        >>= \v -> Just $ PostUn v offset count
-    1027    -> maker mkStringArrayTag   >>= \v -> Just $ OldFileNames v offset count
+    1027    -> maker mkStringArrayTag   >>= \v -> Just $ OBSOLETE $ OldFileNames v offset count
     1028    -> maker mkWord32Tag        >>= \v -> Just $ FileSizes v offset count
     1029    -> maker mkCharTag          >>= \v -> Just $ FileStates v offset count
     1030    -> maker mkWord16Tag        >>= \v -> Just $ FileModes v offset count
-    1031    -> maker mkWord32Tag        >>= \v -> Just $ FileUIDs v offset count
-    1032    -> maker mkWord32Tag        >>= \v -> Just $ FileGIDs v offset count
+    1031    -> maker mkWord32Tag        >>= \v -> Just $ INTERNAL $ OBSOLETE $ FileUIDs v offset count
+    1032    -> maker mkWord32Tag        >>= \v -> Just $ INTERNAL $ OBSOLETE $ FileGIDs v offset count
     1033    -> maker mkWord16Tag        >>= \v -> Just $ FileRDevs v offset count
     1034    -> maker mkWord32Tag        >>= \v -> Just $ FileMTimes v offset count
     1035    -> maker mkStringArrayTag   >>= \v -> Just $ FileMD5s v offset count
     1036    -> maker mkStringArrayTag   >>= \v -> Just $ FileLinkTos v offset count
     1037    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ FileFlags v offset count
-    1038    -> maker mkNullTag          >>= \v -> Just $ Root v offset count
+    1038    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ Root v offset count
     1039    -> maker mkStringArrayTag   >>= \v -> Just $ FileUserName v offset count
     1040    -> maker mkStringArrayTag   >>= \v -> Just $ FileGroupName v offset count
-    1041    -> maker mkNullTag          >>= \v -> Just $ Exclude v offset count
-    1042    -> maker mkNullTag          >>= \v -> Just $ Exclusive v offset count
+    1041    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ Exclude v offset count
+    1042    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ Exclusive v offset count
     1043    -> maker mkBinaryTag        >>= \v -> Just $ Icon v offset count
     1044    -> maker mkStringTag        >>= \v -> Just $ SourceRPM v offset count
     1045    -> maker mkWord32Tag        >>= \v -> Just $ FileVerifyFlags v offset count
@@ -444,14 +450,14 @@ mkTag store tag ty offset count = case tag of
     1053    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ ConflictFlags v offset count
     1054    -> maker mkStringArrayTag   >>= \v -> Just $ ConflictName v offset count
     1055    -> maker mkStringArrayTag   >>= \v -> Just $ ConflictVersion v offset count
-    1056    -> maker mkStringTag        >>= \v -> Just $ DefaultPrefix v offset count
-    1057    -> maker mkStringTag        >>= \v -> Just $ BuildRoot v offset count
-    1058    -> maker mkStringTag        >>= \v -> Just $ InstallPrefix v offset count
+    1056    -> maker mkStringTag        >>= \v -> Just $ INTERNAL $ DEPRECATED $ DefaultPrefix v offset count
+    1057    -> maker mkStringTag        >>= \v -> Just $ INTERNAL $ OBSOLETE $ BuildRoot v offset count
+    1058    -> maker mkStringTag        >>= \v -> Just $ INTERNAL $ DEPRECATED $ InstallPrefix v offset count
     1059    -> maker mkStringArrayTag   >>= \v -> Just $ ExcludeArch v offset count
     1060    -> maker mkStringArrayTag   >>= \v -> Just $ ExcludeOS v offset count
     1061    -> maker mkStringArrayTag   >>= \v -> Just $ ExclusiveArch v offset count
     1062    -> maker mkStringArrayTag   >>= \v -> Just $ ExclusiveOS v offset count
-    1063    -> maker mkStringTag        >>= \v -> Just $ AutoReqProv v offset count
+    1063    -> maker mkStringTag        >>= \v -> Just $ INTERNAL $ AutoReqProv v offset count
     1064    -> maker mkStringTag        >>= \v -> Just $ RPMVersion v offset count
     1065    -> maker mkStringArrayTag   >>= \v -> Just $ TriggerScripts v offset count
     1066    -> maker mkStringArrayTag   >>= \v -> Just $ TriggerName v offset count
@@ -462,8 +468,8 @@ mkTag store tag ty offset count = case tag of
     1080    -> maker mkWord32Tag        >>= \v -> Just $ ChangeLogTime v offset count
     1081    -> maker mkStringArrayTag   >>= \v -> Just $ ChangeLogName v offset count
     1082    -> maker mkStringArrayTag   >>= \v -> Just $ ChangeLogText v offset count
-    1083    -> maker mkNullTag          >>= \v -> Just $ BrokenMD5 v offset count
-    1084    -> maker mkNullTag          >>= \v -> Just $ PreReq v offset count
+    1083    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ BrokenMD5 v offset count
+    1084    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ PreReq v offset count
     1085    -> maker mkStringArrayTag   >>= \v -> Just $ PreInProg v offset count
     1086    -> maker mkStringArrayTag   >>= \v -> Just $ PostInProg v offset count
     1087    -> maker mkStringArrayTag   >>= \v -> Just $ PreUnProg v offset count
@@ -472,25 +478,25 @@ mkTag store tag ty offset count = case tag of
     1090    -> maker mkStringArrayTag   >>= \v -> Just $ ObsoleteName v offset count
     1091    -> maker mkStringArrayTag   >>= \v -> Just $ VerifyScriptProg v offset count
     1092    -> maker mkStringArrayTag   >>= \v -> Just $ TriggerScriptProg v offset count
-    1093    -> maker mkNullTag          >>= \v -> Just $ DocDir v offset count
+    1093    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ DocDir v offset count
     1094    -> maker mkStringTag        >>= \v -> Just $ Cookie v offset count
     1095    -> maker mkWord32Tag        >>= \v -> Just $ FileDevices v offset count
     1096    -> maker mkWord32Tag        >>= \v -> Just $ FileINodes v offset count
     1097    -> maker mkStringArrayTag   >>= \v -> Just $ FileLangs v offset count
     1098    -> maker mkStringArrayTag   >>= \v -> Just $ Prefixes v offset count
     1099    -> maker mkStringArrayTag   >>= \v -> Just $ InstPrefixes v offset count
-    1100    -> maker mkNullTag          >>= \v -> Just $ TriggerIn v offset count
-    1101    -> maker mkNullTag          >>= \v -> Just $ TriggerUn v offset count
-    1102    -> maker mkNullTag          >>= \v -> Just $ TriggerPostUn v offset count
-    1103    -> maker mkNullTag          >>= \v -> Just $ AutoReq v offset count
-    1104    -> maker mkNullTag          >>= \v -> Just $ AutoProv v offset count
-    1105    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ Capability v offset count
+    1100    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ TriggerIn v offset count
+    1101    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ TriggerUn v offset count
+    1102    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ TriggerPostUn v offset count
+    1103    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ AutoReq v offset count
+    1104    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ AutoProv v offset count
+    1105    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ INTERNAL $ OBSOLETE $ Capability v offset count
     1106    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ SourcePackage v offset count
-    1107    -> maker mkNullTag          >>= \v -> Just $ OldOrigFileNames v offset count
-    1108    -> maker mkNullTag          >>= \v -> Just $ BuildPreReq v offset count
-    1109    -> maker mkNullTag          >>= \v -> Just $ BuildRequires v offset count
-    1110    -> maker mkNullTag          >>= \v -> Just $ BuildConflicts v offset count
-    1111    -> maker mkNullTag          >>= \v -> Just $ BuildMacros v offset count
+    1107    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ OldOrigFileNames v offset count
+    1108    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ BuildPreReq v offset count
+    1109    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ BuildRequires v offset count
+    1110    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ BuildConflicts v offset count
+    1111    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ UNUSED $ BuildMacros v offset count
     1112    -> maker mkWord32Tag        >>= \v -> Just $ ProvideFlags v offset count
     1113    -> maker mkStringArrayTag   >>= \v -> Just $ ProvideVersion v offset count
     1114    -> maker mkWord32Tag        >>= \v -> Just $ ObsoleteFlags v offset count
@@ -509,16 +515,16 @@ mkTag store tag ty offset count = case tag of
     1127    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ InstallColor v offset count
     1128    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ InstallTID v offset count
     1129    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ RemoveTID v offset count
-    1130    -> maker mkNullTag          >>= \v -> Just $ SHA1RHN v offset count
-    1131    -> maker mkStringTag        >>= \v -> Just $ RHNPlatform v offset count
+    1130    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ OBSOLETE $ SHA1RHN v offset count
+    1131    -> maker mkStringTag        >>= \v -> Just $ INTERNAL $ OBSOLETE $ RHNPlatform v offset count
     1132    -> maker mkStringTag        >>= \v -> Just $ Platform v offset count
-    1133    -> maker mkStringArrayTag   >>= \v -> Just $ PatchesName v offset count
-    1134    -> maker mkWord32Tag        >>= \v -> Just $ PatchesFlags v offset count
-    1135    -> maker mkStringArrayTag   >>= \v -> Just $ PatchesVersion v offset count
-    1136    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ CacheCTime v offset count
-    1137    -> maker mkStringTag        >>= \v -> Just $ CachePkgPath v offset count
-    1138    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ CachePkgSize v offset count
-    1139    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ CachePkgMTime v offset count
+    1133    -> maker mkStringArrayTag   >>= \v -> Just $ DEPRECATED $ PatchesName v offset count
+    1134    -> maker mkWord32Tag        >>= \v -> Just $ DEPRECATED $ PatchesFlags v offset count
+    1135    -> maker mkStringArrayTag   >>= \v -> Just $ DEPRECATED $ PatchesVersion v offset count
+    1136    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ INTERNAL $ OBSOLETE $ CacheCTime v offset count
+    1137    -> maker mkStringTag        >>= \v -> Just $ INTERNAL $ OBSOLETE $ CachePkgPath v offset count
+    1138    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ INTERNAL $ OBSOLETE $ CachePkgSize v offset count
+    1139    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ INTERNAL $ OBSOLETE $ CachePkgMTime v offset count
     1140    -> maker mkWord32Tag        >>= \v -> Just $ FileColors v offset count
     1141    -> maker mkWord32Tag        >>= \v -> Just $ FileClass v offset count
     1142    -> maker mkStringArrayTag   >>= \v -> Just $ ClassDict v offset count
@@ -526,7 +532,7 @@ mkTag store tag ty offset count = case tag of
     1144    -> maker mkWord32Tag        >>= \v -> Just $ FileDependsN v offset count
     1145    -> maker mkWord32Tag        >>= \v -> Just $ DependsDict v offset count
     1146    -> maker mkBinaryTag        >>= \v -> Just $ SourcePkgID v offset count
-    1147    -> maker mkStringArrayTag   >>= \v -> Just $ FileContexts v offset count
+    1147    -> maker mkStringArrayTag   >>= \v -> Just $ OBSOLETE $ FileContexts v offset count
     1148    -> maker mkStringArrayTag   >>= \v -> Just $ FSContexts v offset count
     1149    -> maker mkStringArrayTag   >>= \v -> Just $ ReContexts v offset count
     1150    -> maker mkStringArrayTag   >>= \v -> Just $ Policies v offset count
@@ -535,53 +541,53 @@ mkTag store tag ty offset count = case tag of
     1153    -> maker mkStringArrayTag   >>= \v -> Just $ PreTransProg v offset count
     1154    -> maker mkStringArrayTag   >>= \v -> Just $ PostTransProg v offset count
     1155    -> maker mkStringTag        >>= \v -> Just $ DistTag v offset count
-    1156    -> maker mkStringArrayTag   >>= \v -> Just $ OldSuggestsName v offset count
-    1157    -> maker mkStringArrayTag   >>= \v -> Just $ OldSuggestsVersion v offset count
-    1158    -> maker mkWord32Tag        >>= \v -> Just $ OldSuggestsFlags v offset count
-    1159    -> maker mkStringArrayTag   >>= \v -> Just $ OldEnhancesName v offset count
-    1160    -> maker mkStringArrayTag   >>= \v -> Just $ OldEnhancesVersion v offset count
-    1161    -> maker mkWord32Tag        >>= \v -> Just $ OldEnhancesFlags v offset count
-    1162    -> maker mkWord32Tag        >>= \v -> Just $ Priority v offset count
-    1163    -> maker mkStringTag        >>= \v -> Just $ CVSID v offset count
-    1164    -> maker mkStringArrayTag   >>= \v -> Just $ BLinkPkgID v offset count
-    1165    -> maker mkStringArrayTag   >>= \v -> Just $ BLinkHdrID v offset count
-    1166    -> maker mkStringArrayTag   >>= \v -> Just $ BLinkNEVRA v offset count
-    1167    -> maker mkStringArrayTag   >>= \v -> Just $ FLinkPkgID v offset count
-    1168    -> maker mkStringArrayTag   >>= \v -> Just $ FLinkHdrID v offset count
-    1169    -> maker mkStringArrayTag   >>= \v -> Just $ FLinkNEVRA v offset count
-    1170    -> maker mkStringTag        >>= \v -> Just $ PackageOrigin v offset count
-    1171    -> maker mkNullTag          >>= \v -> Just $ TriggerPreIn v offset count
-    1172    -> maker mkNullTag          >>= \v -> Just $ BuildSuggests v offset count
-    1173    -> maker mkNullTag          >>= \v -> Just $ BuildEnhances v offset count
-    1174    -> maker mkWord32Tag        >>= \v -> Just $ ScriptStates v offset count
-    1175    -> maker mkWord32Tag        >>= \v -> Just $ ScriptMetrics v offset count
-    1176    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ BuildCPUClock v offset count
-    1177    -> maker mkWord32Tag        >>= \v -> Just $ FileDigestAlgos v offset count
-    1178    -> maker mkStringArrayTag   >>= \v -> Just $ Variants v offset count
-    1179    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ XMajor v offset count
-    1180    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ XMinor v offset count
-    1181    -> maker mkStringTag        >>= \v -> Just $ RepoTag v offset count
-    1182    -> maker mkStringArrayTag   >>= \v -> Just $ Keywords v offset count
-    1183    -> maker mkStringArrayTag   >>= \v -> Just $ BuildPlatforms v offset count
-    1184    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PackageColor v offset count
-    1185    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PackagePrefColor v offset count
-    1186    -> maker mkStringArrayTag   >>= \v -> Just $ XattrsDict v offset count
-    1187    -> maker mkWord32Tag        >>= \v -> Just $ FileXattrsx v offset count
-    1188    -> maker mkStringArrayTag   >>= \v -> Just $ DepAttrsDict v offset count
-    1189    -> maker mkWord32Tag        >>= \v -> Just $ ConflictAttrsx v offset count
-    1190    -> maker mkWord32Tag        >>= \v -> Just $ ObsoleteAttrsx v offset count
-    1191    -> maker mkWord32Tag        >>= \v -> Just $ ProvideAttrsx v offset count
-    1192    -> maker mkWord32Tag        >>= \v -> Just $ RequireAttrsx v offset count
-    1193    -> maker mkNullTag          >>= \v -> Just $ BuildProvides v offset count
-    1194    -> maker mkNullTag          >>= \v -> Just $ BuildObsoletes v offset count
+    1156    -> maker mkStringArrayTag   >>= \v -> Just $ OBSOLETE $ OldSuggestsName v offset count
+    1157    -> maker mkStringArrayTag   >>= \v -> Just $ OBSOLETE $ OldSuggestsVersion v offset count
+    1158    -> maker mkWord32Tag        >>= \v -> Just $ OBSOLETE $ OldSuggestsFlags v offset count
+    1159    -> maker mkStringArrayTag   >>= \v -> Just $ OBSOLETE $ OldEnhancesName v offset count
+    1160    -> maker mkStringArrayTag   >>= \v -> Just $ OBSOLETE $ OldEnhancesVersion v offset count
+    1161    -> maker mkWord32Tag        >>= \v -> Just $ OBSOLETE $ OldEnhancesFlags v offset count
+    1162    -> maker mkWord32Tag        >>= \v -> Just $ UNIMPLEMENTED $ Priority v offset count
+    1163    -> maker mkStringTag        >>= \v -> Just $ UNIMPLEMENTED $ CVSID v offset count
+    1164    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ BLinkPkgID v offset count
+    1165    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ BLinkHdrID v offset count
+    1166    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ BLinkNEVRA v offset count
+    1167    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ FLinkPkgID v offset count
+    1168    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ FLinkHdrID v offset count
+    1169    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ FLinkNEVRA v offset count
+    1170    -> maker mkStringTag        >>= \v -> Just $ UNIMPLEMENTED $ PackageOrigin v offset count
+    1171    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ TriggerPreIn v offset count
+    1172    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ UNIMPLEMENTED $ BuildSuggests v offset count
+    1173    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ UNIMPLEMENTED $ BuildEnhances v offset count
+    1174    -> maker mkWord32Tag        >>= \v -> Just $ UNIMPLEMENTED $ ScriptStates v offset count
+    1175    -> maker mkWord32Tag        >>= \v -> Just $ UNIMPLEMENTED $ ScriptMetrics v offset count
+    1176    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ UNIMPLEMENTED $ BuildCPUClock v offset count
+    1177    -> maker mkWord32Tag        >>= \v -> Just $ UNIMPLEMENTED $ FileDigestAlgos v offset count
+    1178    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ Variants v offset count
+    1179    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ UNIMPLEMENTED $ XMajor v offset count
+    1180    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ UNIMPLEMENTED $ XMinor v offset count
+    1181    -> maker mkStringTag        >>= \v -> Just $ UNIMPLEMENTED $ RepoTag v offset count
+    1182    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ Keywords v offset count
+    1183    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ BuildPlatforms v offset count
+    1184    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ UNIMPLEMENTED $ PackageColor v offset count
+    1185    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ UNIMPLEMENTED $ PackagePrefColor v offset count
+    1186    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ XattrsDict v offset count
+    1187    -> maker mkWord32Tag        >>= \v -> Just $ UNIMPLEMENTED $ FileXattrsx v offset count
+    1188    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ DepAttrsDict v offset count
+    1189    -> maker mkWord32Tag        >>= \v -> Just $ UNIMPLEMENTED $ ConflictAttrsx v offset count
+    1190    -> maker mkWord32Tag        >>= \v -> Just $ UNIMPLEMENTED $ ObsoleteAttrsx v offset count
+    1191    -> maker mkWord32Tag        >>= \v -> Just $ UNIMPLEMENTED $ ProvideAttrsx v offset count
+    1192    -> maker mkWord32Tag        >>= \v -> Just $ UNIMPLEMENTED $ RequireAttrsx v offset count
+    1193    -> maker mkNullTag          >>= \v -> Just $ UNIMPLEMENTED $ BuildProvides v offset count
+    1194    -> maker mkNullTag          >>= \v -> Just $ UNIMPLEMENTED $ BuildObsoletes v offset count
     1195    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ DBInstance v offset count
     1196    -> maker mkStringTag        >>= \v -> Just $ NVRA v offset count
 
     5000    -> maker mkStringArrayTag   >>= \v -> Just $ FileNames v offset count
     5001    -> maker mkStringArrayTag   >>= \v -> Just $ FileProvide v offset count
     5002    -> maker mkStringArrayTag   >>= \v -> Just $ FileRequire v offset count
-    5003    -> maker mkStringArrayTag   >>= \v -> Just $ FSNames v offset count
-    5004    -> maker mkWord64Tag        >>= \v -> Just $ FSSizes v offset count
+    5003    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ FSNames v offset count
+    5004    -> maker mkWord64Tag        >>= \v -> Just $ UNIMPLEMENTED $ FSSizes v offset count
     5005    -> maker mkStringArrayTag   >>= \v -> Just $ TriggerConds v offset count
     5006    -> maker mkStringArrayTag   >>= \v -> Just $ TriggerType v offset count
     5007    -> maker mkStringArrayTag   >>= \v -> Just $ OrigFileNames v offset count
@@ -605,7 +611,7 @@ mkTag store tag ty offset count = case tag of
     5025    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ PostTransFlags v offset count
     5026    -> maker mkWord32Tag        >>= unlist >>= \v -> Just $ VerifyScriptFlags v offset count
     5027    -> maker mkWord32Tag        >>= \v -> Just $ TriggerScriptFlags v offset count
-    5029    -> maker mkStringArrayTag   >>= \v -> Just $ Collections v offset count
+    5029    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ Collections v offset count
     5030    -> maker mkStringArrayTag   >>= \v -> Just $ PolicyNames v offset count
     5031    -> maker mkStringArrayTag   >>= \v -> Just $ PolicyTypes v offset count
     5032    -> maker mkWord32Tag        >>= \v -> Just $ PolicyTypesIndexes v offset count
@@ -614,8 +620,8 @@ mkTag store tag ty offset count = case tag of
     5035    -> maker mkStringArrayTag   >>= \v -> Just $ OrderName v offset count
     5036    -> maker mkStringArrayTag   >>= \v -> Just $ OrderVersion v offset count
     5037    -> maker mkWord32Tag        >>= \v -> Just $ OrderFlags v offset count
-    5038    -> maker mkStringArrayTag   >>= \v -> Just $ MSSFManifest v offset count
-    5039    -> maker mkStringArrayTag   >>= \v -> Just $ MSSFDomain v offset count
+    5038    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ MSSFManifest v offset count
+    5039    -> maker mkStringArrayTag   >>= \v -> Just $ UNIMPLEMENTED $ MSSFDomain v offset count
     5040    -> maker mkStringArrayTag   >>= \v -> Just $ InstFileNames v offset count
     5041    -> maker mkStringArrayTag   >>= \v -> Just $ RequireNEVRs v offset count
     5042    -> maker mkStringArrayTag   >>= \v -> Just $ ProvideNEVRs v offset count
@@ -639,9 +645,9 @@ mkTag store tag ty offset count = case tag of
     5060    -> maker mkStringArrayTag   >>= \v -> Just $ SupplementNEVRs v offset count
     5061    -> maker mkStringArrayTag   >>= \v -> Just $ EnhanceNEVRs v offset count
     5062    -> maker mkStringTag        >>= \v -> Just $ Encoding v offset count
-    5063    -> maker mkNullTag          >>= \v -> Just $ FileTriggerIn v offset count
-    5064    -> maker mkNullTag          >>= \v -> Just $ FileTriggerUn v offset count
-    5065    -> maker mkNullTag          >>= \v -> Just $ FileTriggerPostUn v offset count
+    5063    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ FileTriggerIn v offset count
+    5064    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ FileTriggerUn v offset count
+    5065    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ FileTriggerPostUn v offset count
     5066    -> maker mkStringArrayTag   >>= \v -> Just $ FileTriggerScripts v offset count
     5067    -> maker mkStringArrayTag   >>= \v -> Just $ FileTriggerScriptProg v offset count
     5068    -> maker mkWord32Tag        >>= \v -> Just $ FileTriggerScriptFlags v offset count
@@ -649,9 +655,9 @@ mkTag store tag ty offset count = case tag of
     5070    -> maker mkWord32Tag        >>= \v -> Just $ FileTriggerIndex v offset count
     5071    -> maker mkStringArrayTag   >>= \v -> Just $ FileTriggerVersion v offset count
     5072    -> maker mkWord32Tag        >>= \v -> Just $ FileTriggerFlags v offset count
-    5073    -> maker mkNullTag          >>= \v -> Just $ TransFileTriggerIn v offset count
-    5074    -> maker mkNullTag          >>= \v -> Just $ TransFileTriggerUn v offset count
-    5075    -> maker mkNullTag          >>= \v -> Just $ TransFileTriggerPostUn v offset count
+    5073    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ TransFileTriggerIn v offset count
+    5074    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ TransFileTriggerUn v offset count
+    5075    -> maker mkNullTag          >>= \v -> Just $ INTERNAL $ TransFileTriggerPostUn v offset count
     5076    -> maker mkStringArrayTag   >>= \v -> Just $ TransFileTriggerScripts v offset count
     5077    -> maker mkStringArrayTag   >>= \v -> Just $ TransFileTriggerScriptProg v offset count
     5078    -> maker mkWord32Tag        >>= \v -> Just $ TransFileTriggerScriptFlags v offset count
@@ -659,7 +665,7 @@ mkTag store tag ty offset count = case tag of
     5080    -> maker mkWord32Tag        >>= \v -> Just $ TransFileTriggerIndex v offset count
     5081    -> maker mkStringArrayTag   >>= \v -> Just $ TransFileTriggerVersion v offset count
     5082    -> maker mkWord32Tag        >>= \v -> Just $ TransFileTriggerFlags v offset count
-    5083    -> maker mkStringTag        >>= \v -> Just $ RemovePathPostFixes v offset count
+    5083    -> maker mkStringTag        >>= \v -> Just $ INTERNAL $ RemovePathPostFixes v offset count
     5084    -> maker mkWord32Tag        >>= \v -> Just $ FileTriggerPriorities v offset count
     5085    -> maker mkWord32Tag        >>= \v -> Just $ TransFileTriggerPriorities v offset count
     5086    -> maker mkStringArrayTag   >>= \v -> Just $ FileTriggerConds v offset count
