@@ -13,37 +13,31 @@ import           Control.Applicative((<$>))
 import           Control.Monad.Error.Class(Error, strMsg)
 import           Control.Monad.Except(MonadError, throwError)
 import           Conduit((=$), awaitForever, yield)
+import           Data.Attoparsec.Binary
 import           Data.Attoparsec.ByteString(Parser, anyWord8, count, take, takeByteString, word8)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as C
 import           Data.Conduit(Conduit)
 import           Data.Conduit.Attoparsec(ParseError(..), conduitParserEither)
 import           Data.Maybe(mapMaybe)
-import           Data.Word(Word16, Word32)
 import           Prelude hiding(take)
 
-import RPM.Internal.Numbers(asWord16, asWord32)
+import RPM.Internal.Numbers(asWord32)
 import RPM.Tags(Tag, mkTag)
 import RPM.Types(Header(..), Lead(..), RPM(..), SectionHeader(..))
-
-takeWord16 :: Parser Word16
-takeWord16 = asWord16 <$> take 2
-
-takeWord32 :: Parser Word32
-takeWord32 = asWord32 <$> take 4
 
 parseLead :: Parser Lead
 parseLead = do
     -- Verify this is an RPM by checking the first four bytes.
-    word8 0xed >> word8 0xab >> word8 0xee >> word8 0xdb
+    word32be 0xedabeedb
 
     rpmMajor <- anyWord8
     rpmMinor <- anyWord8
-    rpmType  <- takeWord16
-    rpmArchNum <- takeWord16
+    rpmType  <- anyWord16be
+    rpmArchNum <- anyWord16be
     rpmName <- C.unpack <$> BS.takeWhile (/= 0) <$> take 66
-    rpmOSNum <- takeWord16
-    rpmSigType <- takeWord16
+    rpmOSNum <- anyWord16be
+    rpmSigType <- anyWord16be
 
     -- Skip 16 reserved bytes at the end of the lead.
     take 16
@@ -64,8 +58,8 @@ parseSectionHeader = do
     sectionVersion <- anyWord8
     -- Skip four reserved bytes.
     take 4
-    sectionCount <- takeWord32
-    sectionSize <- takeWord32
+    sectionCount <- anyWord32be
+    sectionSize <- anyWord32be
 
     return SectionHeader { sectionVersion,
                            sectionCount,

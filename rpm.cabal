@@ -14,6 +14,7 @@ library
     other-modules:      RPM.Internal.Numbers
 
     build-depends:      attoparsec >= 0.12.1.4,
+                        attoparsec-binary,
                         base >= 4.7 && < 4.9,
                         bytestring >= 0.10 && < 0.11,
                         conduit,
@@ -32,6 +33,7 @@ executable inspect
 
     build-depends:      rpm,
                         attoparsec >= 0.12.1.4,
+                        attoparsec-binary,
                         base >= 4.7 && < 4.9,
                         bytestring >= 0.10 && < 0.11,
                         conduit,
@@ -51,6 +53,7 @@ executable unrpm
 
     build-depends:      rpm,
                         attoparsec >= 0.12.1.4,
+                        attoparsec-binary,
                         base >= 4.7 && < 4.9,
                         bytestring >= 0.10 && < 0.11,
                         conduit,
