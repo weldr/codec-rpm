@@ -10,12 +10,14 @@ module RPM.Parse(parseRPM,
 #if !MIN_VERSION_base(4,8,0)
 import           Control.Applicative((<$>))
 #endif
+import           Control.Monad.Error.Class(Error, strMsg)
+import           Control.Monad.Except(MonadError, throwError)
 import           Conduit((=$), awaitForever, yield)
 import           Data.Attoparsec.ByteString(Parser, anyWord8, count, take, takeByteString, word8)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as C
 import           Data.Conduit(Conduit)
-import           Data.Conduit.Attoparsec(conduitParserEither)
+import           Data.Conduit.Attoparsec(ParseError(..), conduitParserEither)
 import           Data.Maybe(mapMaybe)
 import           Data.Word(Word16, Word32)
 import           Prelude hiding(take)
@@ -115,10 +117,10 @@ parseRPM = do
         if remainder > 0 then fromIntegral $ 8 - remainder else 0
 
 -- Like parseRPM, but puts the resulting RPM into a Conduit.
-parseRPMC :: Monad m => Conduit C.ByteString m (Either String RPM)
+parseRPMC :: (Error e, MonadError e m) => Conduit C.ByteString m (Either e RPM)
 parseRPMC =
     conduitParserEither parseRPM =$ consumer
  where
     consumer = awaitForever $ \case
-        Left err       -> yield $ Left (show err)
+        Left err       -> throwError (strMsg $ errorMessage err)
         Right (_, rpm) -> yield $ Right rpm

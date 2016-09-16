@@ -3,7 +3,7 @@
 
 import           Conduit(awaitForever, sinkFile, sinkList, sourceLazy, stdinC)
 import           Control.Monad(void)
-import           Control.Monad.Except(runExceptT, throwError)
+import           Control.Monad.Except(MonadError, runExceptT, throwError)
 import           Control.Monad.Trans.Resource(runResourceT)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
@@ -47,7 +47,7 @@ writeCpioEntry entry@Entry{..} | isEntryDirectory entry = createDirectoryIfMissi
 -- parseRPMC returns an Either String RPM, because it's the result of a parse and could therefore have an
 -- error.  In the error case, use throwError to propagate it up.  In the success case, just grab the
 -- RPM payload out of the record and stick that back into the conduit.
-payloadC :: Conduit (Either String RPM) RPMMonad BS.ByteString
+payloadC :: MonadError e m => Conduit (Either e RPM) m BS.ByteString
 payloadC =
     awaitForever $ \case
         Left err      -> throwError err
