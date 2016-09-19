@@ -659,28 +659,28 @@ mkChar store ty offset count | ty == 1   = Just $ C.unpack $ BS.take count' star
     start = BS.drop (fromIntegral offset) store
 
 mkWord8 :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word8]
-mkWord8 store ty offset count | ty == 2      = Just $ readWords 1 asWord8 start count
+mkWord8 store ty offset count | ty == 2      = Just $ readWords store 1 asWord8 offsets
                               | otherwise    = Nothing
  where
-    start = BS.drop (fromIntegral offset) store
+    offsets = take (fromIntegral count) [offset..]
 
 mkWord16 :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word16]
-mkWord16 store ty offset count | ty == 3     = Just $ readWords 2 asWord16 start count
+mkWord16 store ty offset count | ty == 3     = Just $ readWords store 2 asWord16 offsets
                                | otherwise   = Nothing
  where
-    start  = BS.drop (fromIntegral offset) store
+    offsets = map (\n -> offset + (n*2)) [0 .. count-1]
 
 mkWord32 :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word32]
-mkWord32 store ty offset count | ty == 4     = Just $ readWords 4 asWord32 start count
+mkWord32 store ty offset count | ty == 4     = Just $ readWords store 4 asWord32 offsets
                                | otherwise   = Nothing
  where
-    start  = BS.drop (fromIntegral offset) store
+    offsets = map (\n -> offset + (n*4)) [0 .. count-1]
 
 mkWord64 :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word64]
-mkWord64 store ty offset count | ty == 5     = Just $ readWords 8 asWord64 start count
+mkWord64 store ty offset count | ty == 5     = Just $ readWords store 8 asWord64 offsets
                                | otherwise   = Nothing
  where
-    start  = BS.drop (fromIntegral offset) store
+    offsets = map (\n -> offset + (n*8)) [0 .. count-1]
 
 mkString :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe String
 mkString store ty offset _ | ty == 6   = Just $ C.unpack $ BS.takeWhile (/= 0) start
@@ -707,25 +707,11 @@ mkI18NString store ty offset _ | ty == 9     = Just $ BS.takeWhile (/= 0) start
  where
     start  = BS.drop (fromIntegral offset) store
 
-readWords :: Int -> (BS.ByteString -> a) -> BS.ByteString -> Word32 -> [a]
-readWords size conv bytestring count = let
-    doit _ _  _ 0   a = a
-    doit s fn b cnt a = let
-        (bytes, remainder) = BS.splitAt size b
-     in
-        doit s fn remainder (cnt - 1) (a ++ [fn bytes])
- in
-    doit size conv bytestring count []
+-- I don't know how to split a ByteString up into chunks of a given size, so here's what I'm doing.  Take
+-- a list of offsets of where in the ByteString to read.  Skip to each of those offsets, grab size bytes, and
+-- convert those bytes into the type using the given conversion function.  Return that list.
+readWords :: BS.ByteString -> Int -> (BS.ByteString -> a) -> [Word32] -> [a]
+readWords bs size conv offsets = map (\offset -> conv $ BS.take size $ BS.drop (fromIntegral offset) bs) offsets
 
 readStrings :: BS.ByteString -> Word32 -> [BS.ByteString]
-readStrings bytestring count = let
-    doit _ 0 a = a
-    doit b c a = let
-        (str, remainder) = BS.span (/= 0) b
-     in
-        -- The drop call is because span will leave the string parked on the leading null
-        -- character, so all subsequent calls will see that first and return a "" for str.
-        -- Just drop that leading character and move on.
-        doit (BS.drop 1 remainder) (c - 1) (a ++ [str])
- in
-    doit bytestring count []
+readStrings bytestring count  = take (fromIntegral count) $ BS.split 0 bytestring
