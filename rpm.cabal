@@ -65,7 +65,8 @@ executable unrpm
                         lzma-conduit,
                         mtl >= 2.2.1,
                         pretty >= 1.1.2.0,
-                        resourcet
+                        resourcet,
+                        transformers
 
     default-language:   Haskell2010
 

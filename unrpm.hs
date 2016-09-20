@@ -1,15 +1,18 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RecordWildCards #-}
 
-import           Conduit(awaitForever, sinkFile, sinkList, sourceLazy, stdinC)
+import           Conduit(awaitForever, sinkFile, sourceLazy, stdinC)
 import           Control.Monad(void)
 import           Control.Monad.Except(MonadError, runExceptT, throwError)
+import           Control.Monad.IO.Class(liftIO)
 import           Control.Monad.Trans.Resource(runResourceT)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
 import           Data.CPIO(Entry(..), isEntryDirectory, readCPIO)
 import           Data.Conduit(($$), (=$=), Conduit, Producer, yield)
+import           Data.Conduit.Combinators(mapM_)
 import           Data.Conduit.Lzma(decompress)
+import           Prelude hiding(mapM_)
 import           System.Directory(createDirectoryIfMissing)
 import           System.FilePath((</>), splitFileName)
 
@@ -56,16 +59,16 @@ payloadC =
 main :: IO ()
 main = do
     -- Hopefully self-explanatory - runErrorT and runResourceT execute and unwrap the monads, giving the
-    -- actual result of the whole conduit.  That's either an error message or a list of cpio Entries.
-    -- The individual pipeline segments do what they look like they do.
+    -- actual result of the whole conduit.  That's either an error message nothing, and the files are
+    -- written out in the pipeline kind of as a side effect.
     result <- runExceptT $ runResourceT $
             getRPM
         =$= parseRPMC
         =$= payloadC
         =$= decompress Nothing
         =$= readCPIO
-        $$  sinkList
+        $$  mapM_ (liftIO . writeCpioEntry)
 
     case result of
-        Left e          -> print e
-        Right entries   -> mapM_ writeCpioEntry entries
+        Left e  -> print e
+        Right _ -> return ()
