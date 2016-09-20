@@ -77,6 +77,7 @@ executable rpm2json
     
     build-depends:      rpm,
                         attoparsec >= 0.12.1.4,
+                        attoparsec-binary,
                         base >= 4.7 && < 4.9,
                         aeson >= 1.0.0.0,
                         aeson-pretty,
