@@ -3,7 +3,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import           Conduit(($$), (=$), awaitForever, stdinC)
-import           Control.Monad(liftM)
 import           Control.Monad.Except(MonadError)
 import           Control.Monad.IO.Class(liftIO)
 import           Data.Aeson(Value(..), toJSON, ToJSON, object, (.=))
@@ -48,28 +47,54 @@ tagValue = gmapQi 0 cast
 
 -- There's probably a better way to do this
 -- type needs to be explicit on account of OverloadedStrings
+stringType :: TypeRep
 stringType = typeOf ("" :: String)
+
+stringListType :: TypeRep
+stringListType = typeOf ([] :: [String])
+
+word16ListType :: TypeRep
+word16ListType = typeOf ([] :: [Word16])
+
+word32Type :: TypeRep
 word32Type = typeOf (0 :: Word32)
-word64Type = typeOf (0 :: Word32)
+
+word32ListType :: TypeRep
+word32ListType = typeOf ([] :: [Word32])
+
+word64Type :: TypeRep
+word64Type = typeOf (0 :: Word64)
+
+word64ListType :: TypeRep
+word64ListType = typeOf ([] :: [Word64])
+
+tagToJSON :: Tag -> Maybe Value
+tagToJSON t
+    | tt == stringType     = applyJSON (tagValue t :: Maybe String)
+    | tt == word32Type     = applyJSON (tagValue t :: Maybe Word32)
+    | tt == word64Type     = applyJSON (tagValue t :: Maybe Word64)
+    | tt == stringListType = applyJSON (tagValue t :: Maybe [String])
+    | tt == word16ListType = applyJSON (tagValue t :: Maybe [Word16])
+    | tt == word32ListType = applyJSON (tagValue t :: Maybe [Word32])
+    | tt == word64ListType = applyJSON (tagValue t :: Maybe [Word64])
+    | otherwise            = Nothing
+    where tt = tagType t
+
+          -- Do not let type inference get a hold of this one, or it'll infer based
+          -- on the first case and barf on the rest
+          applyJSON :: (Functor f, ToJSON a) => f a -> f Value
+          applyJSON = fmap toJSON
 
 instance ToJSON Tag where
     toJSON t = let namePair = "name" .= tagName t
-                   -- Depending on the type of the thing, use a cast to pull
-                   -- it out of. Go ahead and conver to JSON here so everything
-                   -- is a common type.
-                   value    = case tagType t of
-                                stringType -> fmap toJSON (tagValue t :: Maybe String)
-                                word32Type -> fmap toJSON (tagValue t :: Maybe Word32)
-                                word64Type -> fmap toJSON (tagValue t :: Maybe Word64)
-                                _          -> Nothing
+                   value = tagToJSON t
+
                    -- If we have a value, it should be passed to the object below,
-                   -- otherwise just pass name.
+                   -- otherwise use an empty list so the object just gets "name".
                    valueList = case value of
                                 Just x  -> [ "value" .= x ]
                                 Nothing -> []
-               in 
-               
-               object (namePair : valueList)
+               in object (namePair : valueList)
 
 -- for Header, skip the headerStore ByteStream
 instance ToJSON Header where
