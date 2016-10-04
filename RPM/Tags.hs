@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveDataTypeable #-}
+
 module RPM.Tags(Tag(..),
                 Null(..),
                 mkTag)
@@ -5,6 +7,8 @@ module RPM.Tags(Tag(..),
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as C
+import           Data.Data(Data)
+import           Data.Typeable(Typeable)
 import           Data.Word
 import           Text.PrettyPrint.HughesPJClass(Pretty(..))
 import           Text.PrettyPrint(text)
@@ -322,7 +326,7 @@ data Tag = DEPRECATED                   Tag
          | TransFileTriggerType         [String] Word32 Word32
          | FileSignatures               [String] Word32 Word32
          | FileSignatureLength          Word32 Word32 Word32
-  deriving(Eq, Show)
+  deriving(Eq, Show, Data, Typeable)
 
 instance Pretty Tag where
     -- Drop the last two Word32s from the pretty printed version of a tag, since who cares?
@@ -331,7 +335,7 @@ instance Pretty Tag where
     pPrint t = text . unwords $ init . init $ words (show t)
 
 data Null = Null
- deriving(Eq, Show)
+ deriving(Eq, Show, Data, Typeable)
 
 mkTag :: BS.ByteString -> Int -> Word32 -> Word32 -> Word32 -> Maybe Tag
 mkTag store tag ty offset count = case tag of
