@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -8,7 +9,7 @@ import           Control.Monad.IO.Class(liftIO)
 import           Data.Aeson(Value(..), toJSON, ToJSON, object, (.=))
 import           Data.Aeson.TH(deriveToJSON, defaultOptions)
 import           Data.Aeson.Encode.Pretty(encodePretty)
-import qualified Data.ByteString.Lazy as BSL
+import qualified Data.ByteString.Lazy.Char8 as C
 import           Data.Conduit(Conduit, Consumer, yield)
 import           Data.Data
 import           Data.Word
@@ -116,9 +117,8 @@ encodeC = awaitForever $ \case
 consumer :: Show e => Consumer (Either e Value) IO ()
 consumer = awaitForever $ \case
     Left err   -> liftIO $ print err
-    Right json -> liftIO $ BSL.putStr $ encodePretty json
+    Right json -> liftIO $ C.putStrLn $ encodePretty json
 
 main :: IO ()
-main = do
+main =
     stdinC $$ parseRPMC =$ encodeC =$ consumer
-    putStrLn ""
