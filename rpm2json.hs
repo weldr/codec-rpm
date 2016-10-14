@@ -1,6 +1,5 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 import           Conduit(($$), (=$), awaitForever, stdinC)
@@ -108,16 +107,12 @@ instance ToJSON RPM where
                           "rpmHeaders" .= toJSON (rpmHeaders rpm) ]
 
 -- conduit to encode RPM into a JSON value. Errors are passed through
-encodeC :: MonadError e m => Conduit (Either e RPM) m (Either e Value)
-encodeC = awaitForever $ \case
-    Left err  -> yield $ Left err
-    Right rpm -> yield $ Right $ toJSON rpm
+encodeC :: Monad m => Conduit RPM m Value
+encodeC = awaitForever (yield . toJSON)
 
 -- output sink
-consumer :: Show e => Consumer (Either e Value) IO ()
-consumer = awaitForever $ \case
-    Left err   -> liftIO $ print err
-    Right json -> liftIO $ C.putStrLn $ encodePretty json
+consumer :: Consumer Value IO ()
+consumer = awaitForever (liftIO . C.putStrLn . encodePretty)
 
 main :: IO ()
 main =
