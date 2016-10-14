@@ -1,5 +1,3 @@
-{-# LANGUAGE LambdaCase #-}
-
 import Conduit(($$), (=$), awaitForever, stdinC)
 import Control.Monad.IO.Class(liftIO)
 import Data.Conduit(Consumer)
@@ -9,10 +7,8 @@ import Text.PrettyPrint.HughesPJClass(Pretty(pPrint))
 import RPM.Parse(parseRPMC)
 import RPM.Types(RPM)
 
-consumer :: Show e => Consumer (Either e RPM) IO ()
-consumer = awaitForever $ \case
-    Left err  -> liftIO $ print err
-    Right rpm -> liftIO $ putStrLn $ render $ pPrint rpm
+consumer :: Consumer RPM IO ()
+consumer = awaitForever (liftIO . putStrLn . render . pPrint)
 
 main :: IO ()
 main =

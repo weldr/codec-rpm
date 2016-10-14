@@ -111,10 +111,10 @@ parseRPM = do
         if remainder > 0 then fromIntegral $ 8 - remainder else 0
 
 -- Like parseRPM, but puts the resulting RPM into a Conduit.
-parseRPMC :: (Error e, MonadError e m) => Conduit C.ByteString m (Either e RPM)
+parseRPMC :: (Error e, MonadError e m) => Conduit C.ByteString m RPM
 parseRPMC =
     conduitParserEither parseRPM =$ consumer
  where
     consumer = awaitForever $ \case
         Left err       -> throwError (strMsg $ errorMessage err)
-        Right (_, rpm) -> yield $ Right rpm
+        Right (_, rpm) -> yield rpm
