@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 
 module RPM.Parse(parseRPM,
@@ -10,7 +11,6 @@ module RPM.Parse(parseRPM,
 #if !MIN_VERSION_base(4,8,0)
 import           Control.Applicative((<$>))
 #endif
-import           Control.Monad.Error.Class(Error, strMsg)
 import           Control.Monad.Except(MonadError, throwError)
 import           Conduit((=$), awaitForever, yield)
 import           Data.Attoparsec.Binary
@@ -111,10 +111,10 @@ parseRPM = do
         if remainder > 0 then fromIntegral $ 8 - remainder else 0
 
 -- Like parseRPM, but puts the resulting RPM into a Conduit.
-parseRPMC :: (Error e, MonadError e m) => Conduit C.ByteString m RPM
+parseRPMC :: (MonadError String m) => Conduit C.ByteString m RPM
 parseRPMC =
     conduitParserEither parseRPM =$ consumer
  where
     consumer = awaitForever $ \case
-        Left err       -> throwError (strMsg $ errorMessage err)
+        Left err       -> throwError $ errorMessage err
         Right (_, rpm) -> yield rpm

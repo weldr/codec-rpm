@@ -3,8 +3,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import           Conduit(($$), (=$), awaitForever, stdinC)
-import           Control.Monad.Except(MonadError)
-import           Control.Monad.IO.Class(liftIO)
+import           Control.Monad(void)
+import           Control.Monad.Except(runExceptT)
+import           Control.Monad.IO.Class(MonadIO, liftIO)
 import           Data.Aeson(Value(..), toJSON, ToJSON, object, (.=))
 import           Data.Aeson.TH(deriveToJSON, defaultOptions)
 import           Data.Aeson.Encode.Pretty(encodePretty)
@@ -111,9 +112,9 @@ encodeC :: Monad m => Conduit RPM m Value
 encodeC = awaitForever (yield . toJSON)
 
 -- output sink
-consumer :: Consumer Value IO ()
+consumer :: MonadIO m => Consumer Value m ()
 consumer = awaitForever (liftIO . C.putStrLn . encodePretty)
 
 main :: IO ()
 main =
-    stdinC $$ parseRPMC =$ encodeC =$ consumer
+    void $ runExceptT $ stdinC $$ parseRPMC =$ encodeC =$ consumer

@@ -4,7 +4,7 @@
 import           Conduit(awaitForever, sinkFile, sourceLazy, stdinC)
 import           Control.Monad(void)
 import           Control.Monad.Except(MonadError, runExceptT)
-import           Control.Monad.IO.Class(liftIO)
+import           Control.Monad.IO.Class(MonadIO, liftIO)
 import           Control.Monad.Trans.Resource(runResourceT)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
@@ -17,7 +17,7 @@ import           System.Directory(createDirectoryIfMissing)
 import           System.FilePath((</>), splitFileName)
 
 import RPM.Parse(parseRPMC)
-import RPM.Types(RPM(..), RPMMonad)
+import RPM.Types(RPM(..))
 
 -- Grab an RPM from stdin and convert it into a chunked conduit of ByteStrings.  This could
 -- just as easily come from a file (using sourceFile) or over the network (see httpSink in
@@ -33,9 +33,8 @@ import RPM.Types(RPM(..), RPMMonad)
 -- Long story short, chunks are useful for when we need to just pipe lots of data from one place
 -- to another or when we need to tell conduit about types.  Elements are useful for when we need
 -- to do something to the contents.
-getRPM :: Producer RPMMonad BS.ByteString
-getRPM =
-    stdinC
+getRPM :: MonadIO m => Producer m BS.ByteString
+getRPM = stdinC
 
 -- If a cpio entry is a directory, just create it.  If it's a file, create the directory containing
 -- it and then stream the contents onto disk.  I'm not worrying with permissions, file mode, timestamps,
