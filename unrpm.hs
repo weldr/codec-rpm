@@ -1,26 +1,27 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE RankNTypes #-}
 
-import           Conduit(awaitForever, sinkFile, sourceLazy, stdinC)
-import           Control.Monad(void)
+import           Conduit(MonadResource, awaitForever, runResourceT, sinkFile, sourceLazy, sourceFile)
+import           Control.Monad(void, when)
 import           Control.Monad.Except(MonadError, runExceptT)
-import           Control.Monad.IO.Class(MonadIO, liftIO)
-import           Control.Monad.Trans.Resource(runResourceT)
+import           Control.Monad.IO.Class(liftIO)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
 import           Data.CPIO(Entry(..), isEntryDirectory, readCPIO)
 import           Data.Conduit(($$), (=$=), Conduit, Producer, yield)
-import           Data.Conduit.Combinators(mapM_)
+import qualified Data.Conduit.Combinators as DCC
 import           Data.Conduit.Lzma(decompress)
-import           Prelude hiding(mapM_)
 import           System.Directory(createDirectoryIfMissing)
+import           System.Environment(getArgs)
+import           System.Exit(exitFailure)
 import           System.FilePath((</>), splitFileName)
 
 import RPM.Parse(parseRPMC)
 import RPM.Types(RPM(..))
 
 -- Grab an RPM from stdin and convert it into a chunked conduit of ByteStrings.  This could
--- just as easily come from a file (using sourceFile) or over the network (see httpSink in
+-- just as easily come from a stdin (using stdinC) or over the network (see httpSink in
 -- the http-conduit package, for instance).
 --
 -- Important note:  stdinC produces a conduit of multiple ByteStrings.  A single ByteString
@@ -33,8 +34,9 @@ import RPM.Types(RPM(..))
 -- Long story short, chunks are useful for when we need to just pipe lots of data from one place
 -- to another or when we need to tell conduit about types.  Elements are useful for when we need
 -- to do something to the contents.
-getRPM :: MonadIO m => Producer m BS.ByteString
-getRPM = stdinC
+getRPM :: MonadResource m => FilePath -> Producer m BS.ByteString
+getRPM = sourceFile
+
 
 -- If a cpio entry is a directory, just create it.  If it's a file, create the directory containing
 -- it and then stream the contents onto disk.  I'm not worrying with permissions, file mode, timestamps,
@@ -50,19 +52,30 @@ writeCpioEntry entry@Entry{..} | isEntryDirectory entry = createDirectoryIfMissi
 payloadC :: MonadError e m => Conduit RPM m BS.ByteString
 payloadC = awaitForever (yield . rpmArchive)
 
-main :: IO ()
-main = do
+processRPM :: FilePath -> IO ()
+processRPM path = do
     -- Hopefully self-explanatory - runErrorT and runResourceT execute and unwrap the monads, giving the
     -- actual result of the whole conduit.  That's either an error message nothing, and the files are
     -- written out in the pipeline kind of as a side effect.
     result <- runExceptT $ runResourceT $
-            getRPM
+            getRPM path
         =$= parseRPMC
         =$= payloadC
         =$= decompress Nothing
         =$= readCPIO
-        $$  mapM_ (liftIO . writeCpioEntry)
+        $$  DCC.mapM_ (liftIO . writeCpioEntry)
 
     case result of
         Left e  -> print e
         Right _ -> return ()
+
+main :: IO ()
+main = do
+    -- Read the list of rpms to process from the command line arguments
+    argv <- getArgs
+
+    when (length argv < 1) $ do
+        putStrLn "Usage: unrpm RPM [RPM ...]"
+        exitFailure
+
+    mapM_ processRPM argv
