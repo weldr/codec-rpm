@@ -3,21 +3,12 @@
 module RPM.Types
  where
 
-import           Control.Monad.Except(ExceptT)
-import           Control.Monad.Trans.Resource(ResourceT)
 import qualified Data.ByteString as BS
 import           Data.Word(Word8, Word16, Word32)
 import           Text.PrettyPrint.HughesPJClass(Pretty(..))
 import           Text.PrettyPrint((<>), ($$), nest, text, vcat)
 
 import RPM.Tags
-
--- The monad transformer stack all our Producers, Consumers, and Conduits operate in.  IO is at the bottom,
--- as it must be if it's in any transformer stack.  Its use is obvious - we're reading and writing files
--- on disk.  ExceptT allows us to return one of two values from the pipeline - an error string, or the
--- result of the computation.  On error, all the other pipeline sections will be skipped.  ResourceT
--- keeps track of open file handles for us, opening and closing them as needed.
-type RPMMonad = ResourceT (ExceptT String IO)
 
 data RPM = RPM {
     rpmLead :: Lead,
