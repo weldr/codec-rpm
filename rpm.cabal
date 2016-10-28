@@ -1,6 +1,5 @@
 name:                rpm
 version:             1
-license-file:        LICENSE
 author:              Chris Lumens
 maintainer:          clumens@redhat.com
 build-type:          Simple
