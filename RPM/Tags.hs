@@ -2,12 +2,18 @@
 
 module RPM.Tags(Tag(..),
                 Null(..),
+                findByteStringTag,
+                findTag,
+                findStringTag,
+                findStringListTag,
                 mkTag)
  where
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as C
-import           Data.Data(Data)
+import           Data.Data(Data, cast, gmapQi, showConstr, toConstr)
+import           Data.List(find)
+import           Data.Maybe(fromMaybe)
 import           Data.Typeable(Typeable)
 import           Data.Word
 import           Text.PrettyPrint.HughesPJClass(Pretty(..))
@@ -719,3 +725,26 @@ readWords bs size conv offsets = map (\offset -> conv $ BS.take size $ BS.drop (
 
 readStrings :: BS.ByteString -> Word32 -> [BS.ByteString]
 readStrings bytestring count  = take (fromIntegral count) $ BS.split 0 bytestring
+
+-- | Given a 'Tag' name and a list of 'Tag's, find the match and return it as a Maybe.
+findTag :: String -> [Tag] -> Maybe Tag
+findTag name = find (\t -> name == showConstr (toConstr t))
+
+-- | Given a 'Tag' name and a list of 'Tag's, find the match, convert it into a
+-- 'ByteString', and return it as a Maybe.
+findByteStringTag :: String -> [Tag] -> Maybe BS.ByteString
+findByteStringTag name tags = findTag name tags >>= \t -> tagValue t :: Maybe BS.ByteString
+
+-- | Given a 'Tag' name and a list of 'Tag's, find the match, convert it into a
+-- String, and return it as a Maybe.
+findStringTag :: String -> [Tag] -> Maybe String
+findStringTag name tags = findTag name tags >>= \t -> tagValue t :: Maybe String
+
+-- | Given a 'Tag' name and a list of 'Tag's, find all matches, convert them into
+-- Strings, and return as a list.  If no results are found, return an empty list.
+findStringListTag :: String -> [Tag] -> [String]
+findStringListTag name tags = fromMaybe [] $ findTag name tags >>= \t -> tagValue t :: Maybe [String]
+
+-- | Given a 'Tag', return its type.
+tagValue :: Typeable a => Tag -> Maybe a
+tagValue = gmapQi 0 cast
