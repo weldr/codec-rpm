@@ -6,7 +6,8 @@ module RPM.Tags(Tag(..),
                 findTag,
                 findStringTag,
                 findStringListTag,
-                mkTag)
+                mkTag,
+                tagValue)
  where
 
 import qualified Data.ByteString as BS
