@@ -1,4 +1,4 @@
--- Copyright (C) 2016 Red Hat, Inc.
+-- Copyright (C) 2016-2017 Red Hat, Inc.
 --
 -- This library is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,9 @@ module RPM.Tags(Tag(..),
                 findTag,
                 findStringTag,
                 findStringListTag,
+                findWord16Tag,
+                findWord16ListTag,
+                findWord32Tag,
                 findWord32ListTag,
                 mkTag,
                 tagValue)
@@ -762,6 +765,21 @@ findStringTag name tags = findTag name tags >>= \t -> tagValue t :: Maybe String
 -- Strings, and return as a list.  If no results are found, return an empty list.
 findStringListTag :: String -> [Tag] -> [String]
 findStringListTag name tags = fromMaybe [] $ findTag name tags >>= \t -> tagValue t :: Maybe [String]
+
+-- | Given a 'Tag' name and a list of 'Tag's, find the match convert it into a
+-- Word16, and return it as a Maybe.
+findWord16Tag :: String -> [Tag] -> Maybe Word16
+findWord16Tag name tags = findTag name tags >>= \t -> tagValue t :: Maybe Word16
+
+-- | Given a 'Tag' name and a list of 'Tag's, find all matches, convert them into
+-- Word16, and return as a list.  if no results are found, return an empty list.
+findWord16ListTag :: String -> [Tag] -> [Word16]
+findWord16ListTag name tags = fromMaybe [] $ findTag name tags >>= \t -> tagValue t :: Maybe [Word16]
+
+-- | Given a 'Tag' name and a list of 'Tag's, find the match convert it into a
+-- Word32, and return it as a Maybe.
+findWord32Tag :: String -> [Tag] -> Maybe Word32
+findWord32Tag name tags = findTag name tags >>= \t -> tagValue t :: Maybe Word32
 
 -- | Given a 'Tag' name and a list of 'Tag's, find all matches, convert them into
 -- Word32, and return as a list.  if no results are found, return an empty list.
