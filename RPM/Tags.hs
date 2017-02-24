@@ -110,7 +110,7 @@ data Tag = DEPRECATED                   Tag
          | FileMTimes                   [Word32] Word32 Word32
          | FileMD5s                     [String] Word32 Word32
          | FileLinkTos                  [String] Word32 Word32
-         | FileFlags                    Word32 Word32 Word32
+         | FileFlags                    [Word32] Word32 Word32
          | Root                         Null Word32 Word32
          | FileUserName                 [String] Word32 Word32
          | FileGroupName                [String] Word32 Word32
@@ -126,7 +126,7 @@ data Tag = DEPRECATED                   Tag
          | RequireVersion               [String] Word32 Word32
          | NoSource                     [Word32] Word32 Word32
          | NoPatch                      [Word32] Word32 Word32
-         | ConflictFlags                Word32 Word32 Word32
+         | ConflictFlags                [Word32] Word32 Word32
          | ConflictName                 [String] Word32 Word32
          | ConflictVersion              [String] Word32 Word32
          | DefaultPrefix                String Word32 Word32
@@ -426,7 +426,7 @@ mkTag store tag ty offset count = case tag of
     1034    -> maker mkWord32        >>=            \v -> Just $ FileMTimes v offset count
     1035    -> maker mkStringArray   >>=            \v -> Just $ FileMD5s v offset count
     1036    -> maker mkStringArray   >>=            \v -> Just $ FileLinkTos v offset count
-    1037    -> maker mkWord32        >>= unlist >>= \v -> Just $ FileFlags v offset count
+    1037    -> maker mkWord32        >>=            \v -> Just $ FileFlags v offset count
     1038    -> maker mkNull          >>=            \v -> Just $ INTERNAL $ OBSOLETE $ Root v offset count
     1039    -> maker mkStringArray   >>=            \v -> Just $ FileUserName v offset count
     1040    -> maker mkStringArray   >>=            \v -> Just $ FileGroupName v offset count
@@ -442,7 +442,7 @@ mkTag store tag ty offset count = case tag of
     1050    -> maker mkStringArray   >>=            \v -> Just $ RequireVersion v offset count
     1051    -> maker mkWord32        >>=            \v -> Just $ NoSource v offset count
     1052    -> maker mkWord32        >>=            \v -> Just $ NoPatch v offset count
-    1053    -> maker mkWord32        >>= unlist >>= \v -> Just $ ConflictFlags v offset count
+    1053    -> maker mkWord32        >>=            \v -> Just $ ConflictFlags v offset count
     1054    -> maker mkStringArray   >>=            \v -> Just $ ConflictName v offset count
     1055    -> maker mkStringArray   >>=            \v -> Just $ ConflictVersion v offset count
     1056    -> maker mkString        >>=            \v -> Just $ INTERNAL $ DEPRECATED $ DefaultPrefix v offset count
