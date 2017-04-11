@@ -41,6 +41,8 @@ import RPM.Internal.Numbers(asWord32)
 import RPM.Tags(Tag, mkTag)
 import RPM.Types(Header(..), Lead(..), RPM(..), SectionHeader(..))
 
+-- "a <$> b <$> c" looks better than "a . b <$> c"
+{-# ANN parseLead "HLint: ignore Functor law" #-}
 parseLead :: Parser Lead
 parseLead = do
     -- Verify this is an RPM by checking the first four bytes.
