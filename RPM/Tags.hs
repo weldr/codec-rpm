@@ -44,6 +44,10 @@ import RPM.Internal.Numbers
 
 {-# ANN module "HLint: ignore Use camelCase" #-}
 
+-- The character lists are actually lists of characters, ignore the suggestions
+-- to use String instead
+{-# ANN module "HLint: ignore Use String" #-}
+
 data Tag = DEPRECATED                   Tag
          | INTERNAL                     Tag
          | OBSOLETE                     Tag
@@ -741,6 +745,7 @@ mkI18NString store ty offset _ | ty == 9     = Just $ BS.takeWhile (/= 0) start
 -- I don't know how to split a ByteString up into chunks of a given size, so here's what I'm doing.  Take
 -- a list of offsets of where in the ByteString to read.  Skip to each of those offsets, grab size bytes, and
 -- convert those bytes into the type using the given conversion function.  Return that list.
+{-# ANN readWords "HLint: ignore Eta reduce" #-}
 readWords :: BS.ByteString -> Int -> (BS.ByteString -> a) -> [Word32] -> [a]
 readWords bs size conv offsets = map (\offset -> conv $ BS.take size $ BS.drop (fromIntegral offset) bs) offsets
 
