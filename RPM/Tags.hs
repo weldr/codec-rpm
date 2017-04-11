@@ -693,12 +693,6 @@ mkChar store ty offset count | ty == 1   = Just $ C.unpack $ BS.take count' star
     count' = fromIntegral count
     start = BS.drop (fromIntegral offset) store
 
-mkWord8 :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word8]
-mkWord8 store ty offset count | ty == 2      = Just $ readWords store 1 asWord8 offsets
-                              | otherwise    = Nothing
- where
-    offsets = take (fromIntegral count) [offset..]
-
 mkWord16 :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word16]
 mkWord16 store ty offset count | ty == 3     = Just $ readWords store 2 asWord16 offsets
                                | otherwise   = Nothing
