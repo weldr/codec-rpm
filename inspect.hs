@@ -23,7 +23,7 @@ import Text.PrettyPrint.HughesPJClass(Pretty(pPrint))
 import RPM.Parse(parseRPMC)
 import RPM.Types(RPM)
 
-consumer :: (MonadIO m) => Consumer RPM m ()
+consumer :: MonadIO m => Consumer RPM m ()
 consumer = awaitForever (liftIO . putStrLn . render . pPrint)
 
 main :: IO ()

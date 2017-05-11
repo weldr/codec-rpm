@@ -128,7 +128,7 @@ parseRPM = do
         if remainder > 0 then fromIntegral $ 8 - remainder else 0
 
 -- Like parseRPM, but puts the resulting RPM into a Conduit.
-parseRPMC :: (MonadError String m) => Conduit C.ByteString m RPM
+parseRPMC :: MonadError String m => Conduit C.ByteString m RPM
 parseRPMC =
     conduitParserEither parseRPM .| consumer
  where

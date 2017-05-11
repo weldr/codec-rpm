@@ -57,7 +57,7 @@ tagType :: Tag -> TypeRep
 tagType = gmapQi 0 typeOf
 
 -- Use a cast to pull the first parameter out of the constructor.
-tagValue :: (Typeable a) => Tag -> Maybe a
+tagValue :: Typeable a => Tag -> Maybe a
 tagValue = gmapQi 0 cast
 
 -- There's probably a better way to do this
