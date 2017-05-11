@@ -1,4 +1,4 @@
--- Copyright (C) 2016 Red Hat, Inc.
+-- Copyright (C) 2016-2017 Red Hat, Inc.
 --
 -- This library is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU Lesser General Public
@@ -27,12 +27,11 @@ module RPM.Parse(parseRPM,
 import           Control.Applicative((<$>))
 #endif
 import           Control.Monad.Except(MonadError, throwError)
-import           Conduit((=$), awaitForever, yield)
+import           Conduit((.|), Conduit, awaitForever, yield)
 import           Data.Attoparsec.Binary
 import           Data.Attoparsec.ByteString(Parser, anyWord8, count, take, takeByteString, word8)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as C
-import           Data.Conduit(Conduit)
 import           Data.Conduit.Attoparsec(ParseError(..), conduitParserEither)
 import           Data.Maybe(mapMaybe)
 import           Prelude hiding(take)
@@ -131,7 +130,7 @@ parseRPM = do
 -- Like parseRPM, but puts the resulting RPM into a Conduit.
 parseRPMC :: (MonadError String m) => Conduit C.ByteString m RPM
 parseRPMC =
-    conduitParserEither parseRPM =$ consumer
+    conduitParserEither parseRPM .| consumer
  where
     consumer = awaitForever $ \case
         Left err       -> throwError $ errorMessage err

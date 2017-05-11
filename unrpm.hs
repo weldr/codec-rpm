@@ -16,14 +16,13 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE RankNTypes #-}
 
-import           Conduit(MonadResource, awaitForever, runResourceT, sinkFile, sourceLazy, sourceFile)
+import           Conduit((.|), Conduit, MonadResource, Producer, awaitForever, runConduitRes, sinkFile, sourceLazy, sourceFile, yield)
 import           Control.Monad(void, when)
 import           Control.Monad.Except(MonadError, runExceptT)
 import           Control.Monad.IO.Class(liftIO)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
 import           Data.CPIO(Entry(..), isEntryDirectory, readCPIO)
-import           Data.Conduit(($$), (=$=), Conduit, Producer, yield)
 import qualified Data.Conduit.Combinators as DCC
 import           Data.Conduit.Lzma(decompress)
 import           System.Directory(createDirectoryIfMissing)
@@ -60,7 +59,7 @@ writeCpioEntry entry@Entry{..} | isEntryDirectory entry = createDirectoryIfMissi
                                | otherwise              = do
     let (d, f) = splitFileName (BC.unpack cpioFileName)
     createDirectoryIfMissing True d
-    void $ runResourceT $ sourceLazy cpioFileData $$ sinkFile (d </> f)
+    void $ runConduitRes $ sourceLazy cpioFileData .| sinkFile (d </> f)
 
 -- Pull the rpmArchive out of the RPM record
 payloadC :: MonadError e m => Conduit RPM m BS.ByteString
@@ -71,13 +70,13 @@ processRPM path = do
     -- Hopefully self-explanatory - runErrorT and runResourceT execute and unwrap the monads, giving the
     -- actual result of the whole conduit.  That's either an error message nothing, and the files are
     -- written out in the pipeline kind of as a side effect.
-    result <- runExceptT $ runResourceT $
-            getRPM path
-        =$= parseRPMC
-        =$= payloadC
-        =$= decompress Nothing
-        =$= readCPIO
-        $$  DCC.mapM_ (liftIO . writeCpioEntry)
+    result <- runExceptT $ runConduitRes $
+              getRPM path
+           .| parseRPMC
+           .| payloadC
+           .| decompress Nothing
+           .| readCPIO
+           .| DCC.mapM_ (liftIO . writeCpioEntry)
 
     case result of
         Left e  -> print e
