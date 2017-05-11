@@ -369,309 +369,309 @@ data Null = Null
 
 mkTag :: BS.ByteString -> Int -> Word32 -> Word32 -> Word32 -> Maybe Tag
 mkTag store tag ty offset count = case tag of
-    61      -> maker mkNull          >>=                 \v -> Just $ HeaderImage v
-    62      -> maker mkNull          >>=                 \v -> Just $ HeaderSignatures v
-    63      -> maker mkNull          >>=                 \v -> Just $ HeaderImmutable v
-    64      -> maker mkNull          >>=                 \v -> Just $ HeaderRegions v
-    100     -> maker mkStringArray   >>=                 \v -> Just $ HeaderI18NTable v
+    61      -> maker mkNull          >>=                 Just . HeaderImage
+    62      -> maker mkNull          >>=                 Just . HeaderSignatures
+    63      -> maker mkNull          >>=                 Just . HeaderImmutable
+    64      -> maker mkNull          >>=                 Just . HeaderRegions
+    100     -> maker mkStringArray   >>=                 Just . HeaderI18NTable
 
-    256     -> maker mkNull          >>=                 \v -> Just $ SigBase v
-    257     -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ SigSize v
-    258     -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ SigLEMD5_1 v
-    259     -> maker mkBinary        >>=                 \v -> Just $ SigPGP v
-    260     -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ SigLEMD5_2 v
-    261     -> maker mkBinary        >>=                 \v -> Just $ SigMD5 v
-    262     -> maker mkBinary        >>=                 \v -> Just $ SigGPG v
-    263     -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ SigPGP5 v
-    264     -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ SigBadSHA1_1 v
-    265     -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ SigBadSHA1_2 v
-    266     -> maker mkStringArray   >>=                 \v -> Just $ PubKeys v
-    267     -> maker mkBinary        >>=                 \v -> Just $ DSAHeader v
-    268     -> maker mkBinary        >>=                 \v -> Just $ RSAHeader v
-    269     -> maker mkString        >>=                 \v -> Just $ SHA1Header v
-    270     -> maker mkWord64        >>= listToMaybe >>= \v -> Just $ LongSigSize v
-    271     -> maker mkWord64        >>= listToMaybe >>= \v -> Just $ LongArchiveSize v
+    256     -> maker mkNull          >>=                 Just . SigBase
+    257     -> maker mkWord32        >>= listToMaybe >>= Just . SigSize
+    258     -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . SigLEMD5_1
+    259     -> maker mkBinary        >>=                 Just . SigPGP
+    260     -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . SigLEMD5_2
+    261     -> maker mkBinary        >>=                 Just . SigMD5
+    262     -> maker mkBinary        >>=                 Just . SigGPG
+    263     -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . SigPGP5
+    264     -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . SigBadSHA1_1
+    265     -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . SigBadSHA1_2
+    266     -> maker mkStringArray   >>=                 Just . PubKeys
+    267     -> maker mkBinary        >>=                 Just . DSAHeader
+    268     -> maker mkBinary        >>=                 Just . RSAHeader
+    269     -> maker mkString        >>=                 Just . SHA1Header
+    270     -> maker mkWord64        >>= listToMaybe >>= Just . LongSigSize
+    271     -> maker mkWord64        >>= listToMaybe >>= Just . LongArchiveSize
 
-    1000    -> maker mkString        >>=                 \v -> Just $ Name v
-    1001    -> maker mkString        >>=                 \v -> Just $ Version v
-    1002    -> maker mkString        >>=                 \v -> Just $ Release v
-    1003    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ Epoch v
-    1004    -> maker mkI18NString    >>=                 \v -> Just $ Summary v
-    1005    -> maker mkI18NString    >>=                 \v -> Just $ Description v
-    1006    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ BuildTime v
-    1007    -> maker mkString        >>=                 \v -> Just $ BuildHost v
-    1008    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ InstallTime v
-    1009    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ Size v
-    1010    -> maker mkString        >>=                 \v -> Just $ Distribution v
-    1011    -> maker mkString        >>=                 \v -> Just $ Vendor v
-    1012    -> maker mkBinary        >>=                 \v -> Just $ GIF v
-    1013    -> maker mkBinary        >>=                 \v -> Just $ XPM v
-    1014    -> maker mkString        >>=                 \v -> Just $ License v
-    1015    -> maker mkString        >>=                 \v -> Just $ Packager v
-    1016    -> maker mkI18NString    >>=                 \v -> Just $ Group v
-    1017    -> maker mkStringArray   >>=                 \v -> Just $ INTERNAL $ ChangeLog v
-    1018    -> maker mkStringArray   >>=                 \v -> Just $ Source v
-    1019    -> maker mkStringArray   >>=                 \v -> Just $ Patch v
-    1020    -> maker mkString        >>=                 \v -> Just $ URL v
-    1021    -> maker mkString        >>=                 \v -> Just $ OS v
-    1022    -> maker mkString        >>=                 \v -> Just $ Arch v
-    1023    -> maker mkString        >>=                 \v -> Just $ PreIn v
-    1024    -> maker mkString        >>=                 \v -> Just $ PostIn v
-    1025    -> maker mkString        >>=                 \v -> Just $ PreUn v
-    1026    -> maker mkString        >>=                 \v -> Just $ PostUn v
-    1027    -> maker mkStringArray   >>=                 \v -> Just $ OBSOLETE $ OldFileNames v
-    1028    -> maker mkWord32        >>=                 \v -> Just $ FileSizes v
-    1029    -> maker mkChar          >>=                 \v -> Just $ FileStates v
-    1030    -> maker mkWord16        >>=                 \v -> Just $ FileModes v
-    1031    -> maker mkWord32        >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ FileUIDs v
-    1032    -> maker mkWord32        >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ FileGIDs v
-    1033    -> maker mkWord16        >>=                 \v -> Just $ FileRDevs v
-    1034    -> maker mkWord32        >>=                 \v -> Just $ FileMTimes v
-    1035    -> maker mkStringArray   >>=                 \v -> Just $ FileMD5s v
-    1036    -> maker mkStringArray   >>=                 \v -> Just $ FileLinkTos v
-    1037    -> maker mkWord32        >>=                 \v -> Just $ FileFlags v
-    1038    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ Root v
-    1039    -> maker mkStringArray   >>=                 \v -> Just $ FileUserName v
-    1040    -> maker mkStringArray   >>=                 \v -> Just $ FileGroupName v
-    1041    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ Exclude v
-    1042    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ Exclusive v
-    1043    -> maker mkBinary        >>=                 \v -> Just $ Icon v
-    1044    -> maker mkString        >>=                 \v -> Just $ SourceRPM v
-    1045    -> maker mkWord32        >>=                 \v -> Just $ FileVerifyFlags v
-    1046    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ ArchiveSize v
-    1047    -> maker mkStringArray   >>=                 \v -> Just $ ProvideName v
-    1048    -> maker mkWord32        >>=                 \v -> Just $ RequireFlags v
-    1049    -> maker mkStringArray   >>=                 \v -> Just $ RequireName v
-    1050    -> maker mkStringArray   >>=                 \v -> Just $ RequireVersion v
-    1051    -> maker mkWord32        >>=                 \v -> Just $ NoSource v
-    1052    -> maker mkWord32        >>=                 \v -> Just $ NoPatch v
-    1053    -> maker mkWord32        >>=                 \v -> Just $ ConflictFlags v
-    1054    -> maker mkStringArray   >>=                 \v -> Just $ ConflictName v
-    1055    -> maker mkStringArray   >>=                 \v -> Just $ ConflictVersion v
-    1056    -> maker mkString        >>=                 \v -> Just $ INTERNAL $ DEPRECATED $ DefaultPrefix v
-    1057    -> maker mkString        >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ BuildRoot v
-    1058    -> maker mkString        >>=                 \v -> Just $ INTERNAL $ DEPRECATED $ InstallPrefix v
-    1059    -> maker mkStringArray   >>=                 \v -> Just $ ExcludeArch v
-    1060    -> maker mkStringArray   >>=                 \v -> Just $ ExcludeOS v
-    1061    -> maker mkStringArray   >>=                 \v -> Just $ ExclusiveArch v
-    1062    -> maker mkStringArray   >>=                 \v -> Just $ ExclusiveOS v
-    1063    -> maker mkString        >>=                 \v -> Just $ INTERNAL $ AutoReqProv v
-    1064    -> maker mkString        >>=                 \v -> Just $ RPMVersion v
-    1065    -> maker mkStringArray   >>=                 \v -> Just $ TriggerScripts v
-    1066    -> maker mkStringArray   >>=                 \v -> Just $ TriggerName v
-    1067    -> maker mkStringArray   >>=                 \v -> Just $ TriggerVersion v
-    1068    -> maker mkWord32        >>=                 \v -> Just $ TriggerFlags v
-    1069    -> maker mkWord32        >>=                 \v -> Just $ TriggerIndex v
-    1079    -> maker mkString        >>=                 \v -> Just $ VerifyScript v
-    1080    -> maker mkWord32        >>=                 \v -> Just $ ChangeLogTime v
-    1081    -> maker mkStringArray   >>=                 \v -> Just $ ChangeLogName v
-    1082    -> maker mkStringArray   >>=                 \v -> Just $ ChangeLogText v
-    1083    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ BrokenMD5 v
-    1084    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ PreReq v
-    1085    -> maker mkStringArray   >>=                 \v -> Just $ PreInProg v
-    1086    -> maker mkStringArray   >>=                 \v -> Just $ PostInProg v
-    1087    -> maker mkStringArray   >>=                 \v -> Just $ PreUnProg v
-    1088    -> maker mkStringArray   >>=                 \v -> Just $ PostUnProg v
-    1089    -> maker mkStringArray   >>=                 \v -> Just $ BuildArchs v
-    1090    -> maker mkStringArray   >>=                 \v -> Just $ ObsoleteName v
-    1091    -> maker mkStringArray   >>=                 \v -> Just $ VerifyScriptProg v
-    1092    -> maker mkStringArray   >>=                 \v -> Just $ TriggerScriptProg v
-    1093    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ DocDir v
-    1094    -> maker mkString        >>=                 \v -> Just $ Cookie v
-    1095    -> maker mkWord32        >>=                 \v -> Just $ FileDevices v
-    1096    -> maker mkWord32        >>=                 \v -> Just $ FileINodes v
-    1097    -> maker mkStringArray   >>=                 \v -> Just $ FileLangs v
-    1098    -> maker mkStringArray   >>=                 \v -> Just $ Prefixes v
-    1099    -> maker mkStringArray   >>=                 \v -> Just $ InstPrefixes v
-    1100    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ TriggerIn v
-    1101    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ TriggerUn v
-    1102    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ TriggerPostUn v
-    1103    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ AutoReq v
-    1104    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ AutoProv v
-    1105    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ INTERNAL $ OBSOLETE $ Capability v
-    1106    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ SourcePackage v
-    1107    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ OldOrigFileNames v
-    1108    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ BuildPreReq v
-    1109    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ BuildRequires v
-    1110    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ BuildConflicts v
-    1111    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ UNUSED $ BuildMacros v
-    1112    -> maker mkWord32        >>=                 \v -> Just $ ProvideFlags v
-    1113    -> maker mkStringArray   >>=                 \v -> Just $ ProvideVersion v
-    1114    -> maker mkWord32        >>=                 \v -> Just $ ObsoleteFlags v
-    1115    -> maker mkStringArray   >>=                 \v -> Just $ ObsoleteVersion v
-    1116    -> maker mkWord32        >>=                 \v -> Just $ DirIndexes v
-    1117    -> maker mkStringArray   >>=                 \v -> Just $ BaseNames v
-    1118    -> maker mkStringArray   >>=                 \v -> Just $ DirNames v
-    1119    -> maker mkWord32        >>=                 \v -> Just $ OrigDirIndexes v
-    1120    -> maker mkStringArray   >>=                 \v -> Just $ OrigBaseNames v
-    1121    -> maker mkStringArray   >>=                 \v -> Just $ OrigDirNames v
-    1122    -> maker mkString        >>=                 \v -> Just $ OptFlags v
-    1123    -> maker mkString        >>=                 \v -> Just $ DistURL v
-    1124    -> maker mkString        >>=                 \v -> Just $ PayloadFormat v
-    1125    -> maker mkString        >>=                 \v -> Just $ PayloadCompressor v
-    1126    -> maker mkString        >>=                 \v -> Just $ PayloadFlags v
-    1127    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ InstallColor v
-    1128    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ InstallTID v
-    1129    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ RemoveTID v
-    1130    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ SHA1RHN v
-    1131    -> maker mkString        >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ RHNPlatform v
-    1132    -> maker mkString        >>=                 \v -> Just $ Platform v
-    1133    -> maker mkStringArray   >>=                 \v -> Just $ DEPRECATED $ PatchesName v
-    1134    -> maker mkWord32        >>=                 \v -> Just $ DEPRECATED $ PatchesFlags v
-    1135    -> maker mkStringArray   >>=                 \v -> Just $ DEPRECATED $ PatchesVersion v
-    1136    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ INTERNAL $ OBSOLETE $ CacheCTime v
-    1137    -> maker mkString        >>=                 \v -> Just $ INTERNAL $ OBSOLETE $ CachePkgPath v
-    1138    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ INTERNAL $ OBSOLETE $ CachePkgSize v
-    1139    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ INTERNAL $ OBSOLETE $ CachePkgMTime v
-    1140    -> maker mkWord32        >>=                 \v -> Just $ FileColors v
-    1141    -> maker mkWord32        >>=                 \v -> Just $ FileClass v
-    1142    -> maker mkStringArray   >>=                 \v -> Just $ ClassDict v
-    1143    -> maker mkWord32        >>=                 \v -> Just $ FileDependsX v
-    1144    -> maker mkWord32        >>=                 \v -> Just $ FileDependsN v
-    1145    -> maker mkWord32        >>=                 \v -> Just $ DependsDict (map (\x -> ((x `shiftR` 24) .&. 0xff, x .&. 0x00ffffff)) v)
-    1146    -> maker mkBinary        >>=                 \v -> Just $ SourcePkgID v
-    1147    -> maker mkStringArray   >>=                 \v -> Just $ OBSOLETE $ FileContexts v
-    1148    -> maker mkStringArray   >>=                 \v -> Just $ FSContexts v
-    1149    -> maker mkStringArray   >>=                 \v -> Just $ ReContexts v
-    1150    -> maker mkStringArray   >>=                 \v -> Just $ Policies v
-    1151    -> maker mkString        >>=                 \v -> Just $ PreTrans v
-    1152    -> maker mkString        >>=                 \v -> Just $ PostTrans v
-    1153    -> maker mkStringArray   >>=                 \v -> Just $ PreTransProg v
-    1154    -> maker mkStringArray   >>=                 \v -> Just $ PostTransProg v
-    1155    -> maker mkString        >>=                 \v -> Just $ DistTag v
-    1156    -> maker mkStringArray   >>=                 \v -> Just $ OBSOLETE $ OldSuggestsName v
-    1157    -> maker mkStringArray   >>=                 \v -> Just $ OBSOLETE $ OldSuggestsVersion v
-    1158    -> maker mkWord32        >>=                 \v -> Just $ OBSOLETE $ OldSuggestsFlags v
-    1159    -> maker mkStringArray   >>=                 \v -> Just $ OBSOLETE $ OldEnhancesName v
-    1160    -> maker mkStringArray   >>=                 \v -> Just $ OBSOLETE $ OldEnhancesVersion v
-    1161    -> maker mkWord32        >>=                 \v -> Just $ OBSOLETE $ OldEnhancesFlags v
-    1162    -> maker mkWord32        >>=                 \v -> Just $ UNIMPLEMENTED $ Priority v
-    1163    -> maker mkString        >>=                 \v -> Just $ UNIMPLEMENTED $ CVSID v
-    1164    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ BLinkPkgID v
-    1165    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ BLinkHdrID v
-    1166    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ BLinkNEVRA v
-    1167    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ FLinkPkgID v
-    1168    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ FLinkHdrID v
-    1169    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ FLinkNEVRA v
-    1170    -> maker mkString        >>=                 \v -> Just $ UNIMPLEMENTED $ PackageOrigin v
-    1171    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ TriggerPreIn v
-    1172    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ UNIMPLEMENTED $ BuildSuggests v
-    1173    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ UNIMPLEMENTED $ BuildEnhances v
-    1174    -> maker mkWord32        >>=                 \v -> Just $ UNIMPLEMENTED $ ScriptStates v
-    1175    -> maker mkWord32        >>=                 \v -> Just $ UNIMPLEMENTED $ ScriptMetrics v
-    1176    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ UNIMPLEMENTED $ BuildCPUClock v
-    1177    -> maker mkWord32        >>=                 \v -> Just $ UNIMPLEMENTED $ FileDigestAlgos v
-    1178    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ Variants v
-    1179    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ UNIMPLEMENTED $ XMajor v
-    1180    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ UNIMPLEMENTED $ XMinor v
-    1181    -> maker mkString        >>=                 \v -> Just $ UNIMPLEMENTED $ RepoTag v
-    1182    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ Keywords v
-    1183    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ BuildPlatforms v
-    1184    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ UNIMPLEMENTED $ PackageColor v
-    1185    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ UNIMPLEMENTED $ PackagePrefColor v
-    1186    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ XattrsDict v
-    1187    -> maker mkWord32        >>=                 \v -> Just $ UNIMPLEMENTED $ FileXattrsx v
-    1188    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ DepAttrsDict v
-    1189    -> maker mkWord32        >>=                 \v -> Just $ UNIMPLEMENTED $ ConflictAttrsx v
-    1190    -> maker mkWord32        >>=                 \v -> Just $ UNIMPLEMENTED $ ObsoleteAttrsx v
-    1191    -> maker mkWord32        >>=                 \v -> Just $ UNIMPLEMENTED $ ProvideAttrsx v
-    1192    -> maker mkWord32        >>=                 \v -> Just $ UNIMPLEMENTED $ RequireAttrsx v
-    1193    -> maker mkNull          >>=                 \v -> Just $ UNIMPLEMENTED $ BuildProvides v
-    1194    -> maker mkNull          >>=                 \v -> Just $ UNIMPLEMENTED $ BuildObsoletes v
-    1195    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ DBInstance v
-    1196    -> maker mkString        >>=                 \v -> Just $ NVRA v
+    1000    -> maker mkString        >>=                 Just . Name
+    1001    -> maker mkString        >>=                 Just . Version
+    1002    -> maker mkString        >>=                 Just . Release
+    1003    -> maker mkWord32        >>= listToMaybe >>= Just . Epoch
+    1004    -> maker mkI18NString    >>=                 Just . Summary
+    1005    -> maker mkI18NString    >>=                 Just . Description
+    1006    -> maker mkWord32        >>= listToMaybe >>= Just . BuildTime
+    1007    -> maker mkString        >>=                 Just . BuildHost
+    1008    -> maker mkWord32        >>= listToMaybe >>= Just . InstallTime
+    1009    -> maker mkWord32        >>= listToMaybe >>= Just . Size
+    1010    -> maker mkString        >>=                 Just . Distribution
+    1011    -> maker mkString        >>=                 Just . Vendor
+    1012    -> maker mkBinary        >>=                 Just . GIF
+    1013    -> maker mkBinary        >>=                 Just . XPM
+    1014    -> maker mkString        >>=                 Just . License
+    1015    -> maker mkString        >>=                 Just . Packager
+    1016    -> maker mkI18NString    >>=                 Just . Group
+    1017    -> maker mkStringArray   >>=                 Just . INTERNAL . ChangeLog
+    1018    -> maker mkStringArray   >>=                 Just . Source
+    1019    -> maker mkStringArray   >>=                 Just . Patch
+    1020    -> maker mkString        >>=                 Just . URL
+    1021    -> maker mkString        >>=                 Just . OS
+    1022    -> maker mkString        >>=                 Just . Arch
+    1023    -> maker mkString        >>=                 Just . PreIn
+    1024    -> maker mkString        >>=                 Just . PostIn
+    1025    -> maker mkString        >>=                 Just . PreUn
+    1026    -> maker mkString        >>=                 Just . PostUn
+    1027    -> maker mkStringArray   >>=                 Just . OBSOLETE . OldFileNames
+    1028    -> maker mkWord32        >>=                 Just . FileSizes
+    1029    -> maker mkChar          >>=                 Just . FileStates
+    1030    -> maker mkWord16        >>=                 Just . FileModes
+    1031    -> maker mkWord32        >>=                 Just . INTERNAL . OBSOLETE . FileUIDs
+    1032    -> maker mkWord32        >>=                 Just . INTERNAL . OBSOLETE . FileGIDs
+    1033    -> maker mkWord16        >>=                 Just . FileRDevs
+    1034    -> maker mkWord32        >>=                 Just . FileMTimes
+    1035    -> maker mkStringArray   >>=                 Just . FileMD5s
+    1036    -> maker mkStringArray   >>=                 Just . FileLinkTos
+    1037    -> maker mkWord32        >>=                 Just . FileFlags
+    1038    -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . Root
+    1039    -> maker mkStringArray   >>=                 Just . FileUserName
+    1040    -> maker mkStringArray   >>=                 Just . FileGroupName
+    1041    -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . Exclude
+    1042    -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . Exclusive
+    1043    -> maker mkBinary        >>=                 Just . Icon
+    1044    -> maker mkString        >>=                 Just . SourceRPM
+    1045    -> maker mkWord32        >>=                 Just . FileVerifyFlags
+    1046    -> maker mkWord32        >>= listToMaybe >>= Just . ArchiveSize
+    1047    -> maker mkStringArray   >>=                 Just . ProvideName
+    1048    -> maker mkWord32        >>=                 Just . RequireFlags
+    1049    -> maker mkStringArray   >>=                 Just . RequireName
+    1050    -> maker mkStringArray   >>=                 Just . RequireVersion
+    1051    -> maker mkWord32        >>=                 Just . NoSource
+    1052    -> maker mkWord32        >>=                 Just . NoPatch
+    1053    -> maker mkWord32        >>=                 Just . ConflictFlags
+    1054    -> maker mkStringArray   >>=                 Just . ConflictName
+    1055    -> maker mkStringArray   >>=                 Just . ConflictVersion
+    1056    -> maker mkString        >>=                 Just . INTERNAL . DEPRECATED . DefaultPrefix
+    1057    -> maker mkString        >>=                 Just . INTERNAL . OBSOLETE . BuildRoot
+    1058    -> maker mkString        >>=                 Just . INTERNAL . DEPRECATED . InstallPrefix
+    1059    -> maker mkStringArray   >>=                 Just . ExcludeArch
+    1060    -> maker mkStringArray   >>=                 Just . ExcludeOS
+    1061    -> maker mkStringArray   >>=                 Just . ExclusiveArch
+    1062    -> maker mkStringArray   >>=                 Just . ExclusiveOS
+    1063    -> maker mkString        >>=                 Just . INTERNAL . AutoReqProv
+    1064    -> maker mkString        >>=                 Just . RPMVersion
+    1065    -> maker mkStringArray   >>=                 Just . TriggerScripts
+    1066    -> maker mkStringArray   >>=                 Just . TriggerName
+    1067    -> maker mkStringArray   >>=                 Just . TriggerVersion
+    1068    -> maker mkWord32        >>=                 Just . TriggerFlags
+    1069    -> maker mkWord32        >>=                 Just . TriggerIndex
+    1079    -> maker mkString        >>=                 Just . VerifyScript
+    1080    -> maker mkWord32        >>=                 Just . ChangeLogTime
+    1081    -> maker mkStringArray   >>=                 Just . ChangeLogName
+    1082    -> maker mkStringArray   >>=                 Just . ChangeLogText
+    1083    -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . BrokenMD5
+    1084    -> maker mkNull          >>=                 Just . INTERNAL . PreReq
+    1085    -> maker mkStringArray   >>=                 Just . PreInProg
+    1086    -> maker mkStringArray   >>=                 Just . PostInProg
+    1087    -> maker mkStringArray   >>=                 Just . PreUnProg
+    1088    -> maker mkStringArray   >>=                 Just . PostUnProg
+    1089    -> maker mkStringArray   >>=                 Just . BuildArchs
+    1090    -> maker mkStringArray   >>=                 Just . ObsoleteName
+    1091    -> maker mkStringArray   >>=                 Just . VerifyScriptProg
+    1092    -> maker mkStringArray   >>=                 Just . TriggerScriptProg
+    1093    -> maker mkNull          >>=                 Just . INTERNAL . DocDir
+    1094    -> maker mkString        >>=                 Just . Cookie
+    1095    -> maker mkWord32        >>=                 Just . FileDevices
+    1096    -> maker mkWord32        >>=                 Just . FileINodes
+    1097    -> maker mkStringArray   >>=                 Just . FileLangs
+    1098    -> maker mkStringArray   >>=                 Just . Prefixes
+    1099    -> maker mkStringArray   >>=                 Just . InstPrefixes
+    1100    -> maker mkNull          >>=                 Just . INTERNAL . TriggerIn
+    1101    -> maker mkNull          >>=                 Just . INTERNAL . TriggerUn
+    1102    -> maker mkNull          >>=                 Just . INTERNAL . TriggerPostUn
+    1103    -> maker mkNull          >>=                 Just . INTERNAL . AutoReq
+    1104    -> maker mkNull          >>=                 Just . INTERNAL . AutoProv
+    1105    -> maker mkWord32        >>= listToMaybe >>= Just . INTERNAL . OBSOLETE . Capability
+    1106    -> maker mkWord32        >>= listToMaybe >>= Just . SourcePackage
+    1107    -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . OldOrigFileNames
+    1108    -> maker mkNull          >>=                 Just . INTERNAL . BuildPreReq
+    1109    -> maker mkNull          >>=                 Just . INTERNAL . BuildRequires
+    1110    -> maker mkNull          >>=                 Just . INTERNAL . BuildConflicts
+    1111    -> maker mkNull          >>=                 Just . INTERNAL . UNUSED . BuildMacros
+    1112    -> maker mkWord32        >>=                 Just . ProvideFlags
+    1113    -> maker mkStringArray   >>=                 Just . ProvideVersion
+    1114    -> maker mkWord32        >>=                 Just . ObsoleteFlags
+    1115    -> maker mkStringArray   >>=                 Just . ObsoleteVersion
+    1116    -> maker mkWord32        >>=                 Just . DirIndexes
+    1117    -> maker mkStringArray   >>=                 Just . BaseNames
+    1118    -> maker mkStringArray   >>=                 Just . DirNames
+    1119    -> maker mkWord32        >>=                 Just . OrigDirIndexes
+    1120    -> maker mkStringArray   >>=                 Just . OrigBaseNames
+    1121    -> maker mkStringArray   >>=                 Just . OrigDirNames
+    1122    -> maker mkString        >>=                 Just . OptFlags
+    1123    -> maker mkString        >>=                 Just . DistURL
+    1124    -> maker mkString        >>=                 Just . PayloadFormat
+    1125    -> maker mkString        >>=                 Just . PayloadCompressor
+    1126    -> maker mkString        >>=                 Just . PayloadFlags
+    1127    -> maker mkWord32        >>= listToMaybe >>= Just . InstallColor
+    1128    -> maker mkWord32        >>= listToMaybe >>= Just . InstallTID
+    1129    -> maker mkWord32        >>= listToMaybe >>= Just . RemoveTID
+    1130    -> maker mkNull          >>=                 Just . INTERNAL . OBSOLETE . SHA1RHN
+    1131    -> maker mkString        >>=                 Just . INTERNAL . OBSOLETE . RHNPlatform
+    1132    -> maker mkString        >>=                 Just . Platform
+    1133    -> maker mkStringArray   >>=                 Just . DEPRECATED . PatchesName
+    1134    -> maker mkWord32        >>=                 Just . DEPRECATED . PatchesFlags
+    1135    -> maker mkStringArray   >>=                 Just . DEPRECATED . PatchesVersion
+    1136    -> maker mkWord32        >>= listToMaybe >>= Just . INTERNAL . OBSOLETE . CacheCTime
+    1137    -> maker mkString        >>=                 Just . INTERNAL . OBSOLETE . CachePkgPath
+    1138    -> maker mkWord32        >>= listToMaybe >>= Just . INTERNAL . OBSOLETE . CachePkgSize
+    1139    -> maker mkWord32        >>= listToMaybe >>= Just . INTERNAL . OBSOLETE . CachePkgMTime
+    1140    -> maker mkWord32        >>=                 Just . FileColors
+    1141    -> maker mkWord32        >>=                 Just . FileClass
+    1142    -> maker mkStringArray   >>=                 Just . ClassDict
+    1143    -> maker mkWord32        >>=                 Just . FileDependsX
+    1144    -> maker mkWord32        >>=                 Just . FileDependsN
+    1145    -> maker mkWord32        >>=                 Just . DependsDict . map (\x -> ((x `shiftR` 24) .&. 0xff, x .&. 0x00ffffff))
+    1146    -> maker mkBinary        >>=                 Just . SourcePkgID
+    1147    -> maker mkStringArray   >>=                 Just . OBSOLETE . FileContexts
+    1148    -> maker mkStringArray   >>=                 Just . FSContexts
+    1149    -> maker mkStringArray   >>=                 Just . ReContexts
+    1150    -> maker mkStringArray   >>=                 Just . Policies
+    1151    -> maker mkString        >>=                 Just . PreTrans
+    1152    -> maker mkString        >>=                 Just . PostTrans
+    1153    -> maker mkStringArray   >>=                 Just . PreTransProg
+    1154    -> maker mkStringArray   >>=                 Just . PostTransProg
+    1155    -> maker mkString        >>=                 Just . DistTag
+    1156    -> maker mkStringArray   >>=                 Just . OBSOLETE . OldSuggestsName
+    1157    -> maker mkStringArray   >>=                 Just . OBSOLETE . OldSuggestsVersion
+    1158    -> maker mkWord32        >>=                 Just . OBSOLETE . OldSuggestsFlags
+    1159    -> maker mkStringArray   >>=                 Just . OBSOLETE . OldEnhancesName
+    1160    -> maker mkStringArray   >>=                 Just . OBSOLETE . OldEnhancesVersion
+    1161    -> maker mkWord32        >>=                 Just . OBSOLETE . OldEnhancesFlags
+    1162    -> maker mkWord32        >>=                 Just . UNIMPLEMENTED . Priority
+    1163    -> maker mkString        >>=                 Just . UNIMPLEMENTED . CVSID
+    1164    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . BLinkPkgID
+    1165    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . BLinkHdrID
+    1166    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . BLinkNEVRA
+    1167    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . FLinkPkgID
+    1168    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . FLinkHdrID
+    1169    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . FLinkNEVRA
+    1170    -> maker mkString        >>=                 Just . UNIMPLEMENTED . PackageOrigin
+    1171    -> maker mkNull          >>=                 Just . INTERNAL . TriggerPreIn
+    1172    -> maker mkNull          >>=                 Just . INTERNAL . UNIMPLEMENTED . BuildSuggests
+    1173    -> maker mkNull          >>=                 Just . INTERNAL . UNIMPLEMENTED . BuildEnhances
+    1174    -> maker mkWord32        >>=                 Just . UNIMPLEMENTED . ScriptStates
+    1175    -> maker mkWord32        >>=                 Just . UNIMPLEMENTED . ScriptMetrics
+    1176    -> maker mkWord32        >>= listToMaybe >>= Just . UNIMPLEMENTED . BuildCPUClock
+    1177    -> maker mkWord32        >>=                 Just . UNIMPLEMENTED . FileDigestAlgos
+    1178    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . Variants
+    1179    -> maker mkWord32        >>= listToMaybe >>= Just . UNIMPLEMENTED . XMajor
+    1180    -> maker mkWord32        >>= listToMaybe >>= Just . UNIMPLEMENTED . XMinor
+    1181    -> maker mkString        >>=                 Just . UNIMPLEMENTED . RepoTag
+    1182    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . Keywords
+    1183    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . BuildPlatforms
+    1184    -> maker mkWord32        >>= listToMaybe >>= Just . UNIMPLEMENTED . PackageColor
+    1185    -> maker mkWord32        >>= listToMaybe >>= Just . UNIMPLEMENTED . PackagePrefColor
+    1186    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . XattrsDict
+    1187    -> maker mkWord32        >>=                 Just . UNIMPLEMENTED . FileXattrsx
+    1188    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . DepAttrsDict
+    1189    -> maker mkWord32        >>=                 Just . UNIMPLEMENTED . ConflictAttrsx
+    1190    -> maker mkWord32        >>=                 Just . UNIMPLEMENTED . ObsoleteAttrsx
+    1191    -> maker mkWord32        >>=                 Just . UNIMPLEMENTED . ProvideAttrsx
+    1192    -> maker mkWord32        >>=                 Just . UNIMPLEMENTED . RequireAttrsx
+    1193    -> maker mkNull          >>=                 Just . UNIMPLEMENTED . BuildProvides
+    1194    -> maker mkNull          >>=                 Just . UNIMPLEMENTED . BuildObsoletes
+    1195    -> maker mkWord32        >>= listToMaybe >>= Just . DBInstance
+    1196    -> maker mkString        >>=                 Just . NVRA
 
-    5000    -> maker mkStringArray   >>=                 \v -> Just $ FileNames v
-    5001    -> maker mkStringArray   >>=                 \v -> Just $ FileProvide v
-    5002    -> maker mkStringArray   >>=                 \v -> Just $ FileRequire v
-    5003    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ FSNames v
-    5004    -> maker mkWord64        >>=                 \v -> Just $ UNIMPLEMENTED $ FSSizes v
-    5005    -> maker mkStringArray   >>=                 \v -> Just $ TriggerConds v
-    5006    -> maker mkStringArray   >>=                 \v -> Just $ TriggerType v
-    5007    -> maker mkStringArray   >>=                 \v -> Just $ OrigFileNames v
-    5008    -> maker mkWord64        >>=                 \v -> Just $ LongFileSizes v
-    5009    -> maker mkWord64        >>= listToMaybe >>= \v -> Just $ LongSize v
-    5010    -> maker mkStringArray   >>=                 \v -> Just $ FileCaps v
-    5011    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ FileDigestAlgo v
-    5012    -> maker mkString        >>=                 \v -> Just $ BugURL v
-    5013    -> maker mkString        >>=                 \v -> Just $ EVR v
-    5014    -> maker mkString        >>=                 \v -> Just $ NVR v
-    5015    -> maker mkString        >>=                 \v -> Just $ NEVR v
-    5016    -> maker mkString        >>=                 \v -> Just $ NEVRA v
-    5017    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ HeaderColor v
-    5018    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ Verbose v
-    5019    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ EpochNum v
-    5020    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ PreInFlags v
-    5021    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ PostInFlags v
-    5022    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ PreUnFlags v
-    5023    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ PostUnFlags v
-    5024    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ PreTransFlags v
-    5025    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ PostTransFlags v
-    5026    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ VerifyScriptFlags v
-    5027    -> maker mkWord32        >>=                 \v -> Just $ TriggerScriptFlags v
-    5029    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ Collections v
-    5030    -> maker mkStringArray   >>=                 \v -> Just $ PolicyNames v
-    5031    -> maker mkStringArray   >>=                 \v -> Just $ PolicyTypes v
-    5032    -> maker mkWord32        >>=                 \v -> Just $ PolicyTypesIndexes v
-    5033    -> maker mkWord32        >>=                 \v -> Just $ PolicyFlags v
-    5034    -> maker mkString        >>=                 \v -> Just $ PolicyVCS v
-    5035    -> maker mkStringArray   >>=                 \v -> Just $ OrderName v
-    5036    -> maker mkStringArray   >>=                 \v -> Just $ OrderVersion v
-    5037    -> maker mkWord32        >>=                 \v -> Just $ OrderFlags v
-    5038    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ MSSFManifest v
-    5039    -> maker mkStringArray   >>=                 \v -> Just $ UNIMPLEMENTED $ MSSFDomain v
-    5040    -> maker mkStringArray   >>=                 \v -> Just $ InstFileNames v
-    5041    -> maker mkStringArray   >>=                 \v -> Just $ RequireNEVRs v
-    5042    -> maker mkStringArray   >>=                 \v -> Just $ ProvideNEVRs v
-    5043    -> maker mkStringArray   >>=                 \v -> Just $ ObsoleteNEVRs v
-    5044    -> maker mkStringArray   >>=                 \v -> Just $ ConflictNEVRs v
-    5045    -> maker mkWord32        >>=                 \v -> Just $ FileNLinks v
-    5046    -> maker mkStringArray   >>=                 \v -> Just $ RecommendName v
-    5047    -> maker mkStringArray   >>=                 \v -> Just $ RecommendVersion v
-    5048    -> maker mkWord32        >>=                 \v -> Just $ RecommendFlags v
-    5049    -> maker mkStringArray   >>=                 \v -> Just $ SuggestName v
-    5050    -> maker mkStringArray   >>=                 \v -> Just $ SuggestVersion v
-    5051    -> maker mkWord32        >>=                 \v -> Just $ SuggestFlags v
-    5052    -> maker mkStringArray   >>=                 \v -> Just $ SupplementName v
-    5053    -> maker mkStringArray   >>=                 \v -> Just $ SupplementVersion v
-    5054    -> maker mkWord32        >>=                 \v -> Just $ SupplementFlags v
-    5055    -> maker mkStringArray   >>=                 \v -> Just $ EnhanceName v
-    5056    -> maker mkStringArray   >>=                 \v -> Just $ EnhanceVersion v
-    5057    -> maker mkWord32        >>=                 \v -> Just $ EnhanceFlags v
-    5058    -> maker mkStringArray   >>=                 \v -> Just $ RecommendNEVRs v
-    5059    -> maker mkStringArray   >>=                 \v -> Just $ SuggestNEVRs v
-    5060    -> maker mkStringArray   >>=                 \v -> Just $ SupplementNEVRs v
-    5061    -> maker mkStringArray   >>=                 \v -> Just $ EnhanceNEVRs v
-    5062    -> maker mkString        >>=                 \v -> Just $ Encoding v
-    5063    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ FileTriggerIn v
-    5064    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ FileTriggerUn v
-    5065    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ FileTriggerPostUn v
-    5066    -> maker mkStringArray   >>=                 \v -> Just $ FileTriggerScripts v
-    5067    -> maker mkStringArray   >>=                 \v -> Just $ FileTriggerScriptProg v
-    5068    -> maker mkWord32        >>=                 \v -> Just $ FileTriggerScriptFlags v
-    5069    -> maker mkStringArray   >>=                 \v -> Just $ FileTriggerName v
-    5070    -> maker mkWord32        >>=                 \v -> Just $ FileTriggerIndex v
-    5071    -> maker mkStringArray   >>=                 \v -> Just $ FileTriggerVersion v
-    5072    -> maker mkWord32        >>=                 \v -> Just $ FileTriggerFlags v
-    5073    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ TransFileTriggerIn v
-    5074    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ TransFileTriggerUn v
-    5075    -> maker mkNull          >>=                 \v -> Just $ INTERNAL $ TransFileTriggerPostUn v
-    5076    -> maker mkStringArray   >>=                 \v -> Just $ TransFileTriggerScripts v
-    5077    -> maker mkStringArray   >>=                 \v -> Just $ TransFileTriggerScriptProg v
-    5078    -> maker mkWord32        >>=                 \v -> Just $ TransFileTriggerScriptFlags v
-    5079    -> maker mkStringArray   >>=                 \v -> Just $ TransFileTriggerName v
-    5080    -> maker mkWord32        >>=                 \v -> Just $ TransFileTriggerIndex v
-    5081    -> maker mkStringArray   >>=                 \v -> Just $ TransFileTriggerVersion v
-    5082    -> maker mkWord32        >>=                 \v -> Just $ TransFileTriggerFlags v
-    5083    -> maker mkString        >>=                 \v -> Just $ INTERNAL $ RemovePathPostFixes v
-    5084    -> maker mkWord32        >>=                 \v -> Just $ FileTriggerPriorities v
-    5085    -> maker mkWord32        >>=                 \v -> Just $ TransFileTriggerPriorities v
-    5086    -> maker mkStringArray   >>=                 \v -> Just $ FileTriggerConds v
-    5087    -> maker mkStringArray   >>=                 \v -> Just $ FileTriggerType v
-    5088    -> maker mkStringArray   >>=                 \v -> Just $ TransFileTriggerConds v
-    5089    -> maker mkStringArray   >>=                 \v -> Just $ TransFileTriggerType v
-    5090    -> maker mkStringArray   >>=                 \v -> Just $ FileSignatures v
-    5091    -> maker mkWord32        >>= listToMaybe >>= \v -> Just $ FileSignatureLength v
+    5000    -> maker mkStringArray   >>=                 Just . FileNames
+    5001    -> maker mkStringArray   >>=                 Just . FileProvide
+    5002    -> maker mkStringArray   >>=                 Just . FileRequire
+    5003    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . FSNames
+    5004    -> maker mkWord64        >>=                 Just . UNIMPLEMENTED . FSSizes
+    5005    -> maker mkStringArray   >>=                 Just . TriggerConds
+    5006    -> maker mkStringArray   >>=                 Just . TriggerType
+    5007    -> maker mkStringArray   >>=                 Just . OrigFileNames
+    5008    -> maker mkWord64        >>=                 Just . LongFileSizes
+    5009    -> maker mkWord64        >>= listToMaybe >>= Just . LongSize
+    5010    -> maker mkStringArray   >>=                 Just . FileCaps
+    5011    -> maker mkWord32        >>= listToMaybe >>= Just . FileDigestAlgo
+    5012    -> maker mkString        >>=                 Just . BugURL
+    5013    -> maker mkString        >>=                 Just . EVR
+    5014    -> maker mkString        >>=                 Just . NVR
+    5015    -> maker mkString        >>=                 Just . NEVR
+    5016    -> maker mkString        >>=                 Just . NEVRA
+    5017    -> maker mkWord32        >>= listToMaybe >>= Just . HeaderColor
+    5018    -> maker mkWord32        >>= listToMaybe >>= Just . Verbose
+    5019    -> maker mkWord32        >>= listToMaybe >>= Just . EpochNum
+    5020    -> maker mkWord32        >>= listToMaybe >>= Just . PreInFlags
+    5021    -> maker mkWord32        >>= listToMaybe >>= Just . PostInFlags
+    5022    -> maker mkWord32        >>= listToMaybe >>= Just . PreUnFlags
+    5023    -> maker mkWord32        >>= listToMaybe >>= Just . PostUnFlags
+    5024    -> maker mkWord32        >>= listToMaybe >>= Just . PreTransFlags
+    5025    -> maker mkWord32        >>= listToMaybe >>= Just . PostTransFlags
+    5026    -> maker mkWord32        >>= listToMaybe >>= Just . VerifyScriptFlags
+    5027    -> maker mkWord32        >>=                 Just . TriggerScriptFlags
+    5029    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . Collections
+    5030    -> maker mkStringArray   >>=                 Just . PolicyNames
+    5031    -> maker mkStringArray   >>=                 Just . PolicyTypes
+    5032    -> maker mkWord32        >>=                 Just . PolicyTypesIndexes
+    5033    -> maker mkWord32        >>=                 Just . PolicyFlags
+    5034    -> maker mkString        >>=                 Just . PolicyVCS
+    5035    -> maker mkStringArray   >>=                 Just . OrderName
+    5036    -> maker mkStringArray   >>=                 Just . OrderVersion
+    5037    -> maker mkWord32        >>=                 Just . OrderFlags
+    5038    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . MSSFManifest
+    5039    -> maker mkStringArray   >>=                 Just . UNIMPLEMENTED . MSSFDomain
+    5040    -> maker mkStringArray   >>=                 Just . InstFileNames
+    5041    -> maker mkStringArray   >>=                 Just . RequireNEVRs
+    5042    -> maker mkStringArray   >>=                 Just . ProvideNEVRs
+    5043    -> maker mkStringArray   >>=                 Just . ObsoleteNEVRs
+    5044    -> maker mkStringArray   >>=                 Just . ConflictNEVRs
+    5045    -> maker mkWord32        >>=                 Just . FileNLinks
+    5046    -> maker mkStringArray   >>=                 Just . RecommendName
+    5047    -> maker mkStringArray   >>=                 Just . RecommendVersion
+    5048    -> maker mkWord32        >>=                 Just . RecommendFlags
+    5049    -> maker mkStringArray   >>=                 Just . SuggestName
+    5050    -> maker mkStringArray   >>=                 Just . SuggestVersion
+    5051    -> maker mkWord32        >>=                 Just . SuggestFlags
+    5052    -> maker mkStringArray   >>=                 Just . SupplementName
+    5053    -> maker mkStringArray   >>=                 Just . SupplementVersion
+    5054    -> maker mkWord32        >>=                 Just . SupplementFlags
+    5055    -> maker mkStringArray   >>=                 Just . EnhanceName
+    5056    -> maker mkStringArray   >>=                 Just . EnhanceVersion
+    5057    -> maker mkWord32        >>=                 Just . EnhanceFlags
+    5058    -> maker mkStringArray   >>=                 Just . RecommendNEVRs
+    5059    -> maker mkStringArray   >>=                 Just . SuggestNEVRs
+    5060    -> maker mkStringArray   >>=                 Just . SupplementNEVRs
+    5061    -> maker mkStringArray   >>=                 Just . EnhanceNEVRs
+    5062    -> maker mkString        >>=                 Just . Encoding
+    5063    -> maker mkNull          >>=                 Just . INTERNAL . FileTriggerIn
+    5064    -> maker mkNull          >>=                 Just . INTERNAL . FileTriggerUn
+    5065    -> maker mkNull          >>=                 Just . INTERNAL . FileTriggerPostUn
+    5066    -> maker mkStringArray   >>=                 Just . FileTriggerScripts
+    5067    -> maker mkStringArray   >>=                 Just . FileTriggerScriptProg
+    5068    -> maker mkWord32        >>=                 Just . FileTriggerScriptFlags
+    5069    -> maker mkStringArray   >>=                 Just . FileTriggerName
+    5070    -> maker mkWord32        >>=                 Just . FileTriggerIndex
+    5071    -> maker mkStringArray   >>=                 Just . FileTriggerVersion
+    5072    -> maker mkWord32        >>=                 Just . FileTriggerFlags
+    5073    -> maker mkNull          >>=                 Just . INTERNAL . TransFileTriggerIn
+    5074    -> maker mkNull          >>=                 Just . INTERNAL . TransFileTriggerUn
+    5075    -> maker mkNull          >>=                 Just . INTERNAL . TransFileTriggerPostUn
+    5076    -> maker mkStringArray   >>=                 Just . TransFileTriggerScripts
+    5077    -> maker mkStringArray   >>=                 Just . TransFileTriggerScriptProg
+    5078    -> maker mkWord32        >>=                 Just . TransFileTriggerScriptFlags
+    5079    -> maker mkStringArray   >>=                 Just . TransFileTriggerName
+    5080    -> maker mkWord32        >>=                 Just . TransFileTriggerIndex
+    5081    -> maker mkStringArray   >>=                 Just . TransFileTriggerVersion
+    5082    -> maker mkWord32        >>=                 Just . TransFileTriggerFlags
+    5083    -> maker mkString        >>=                 Just . INTERNAL . RemovePathPostFixes
+    5084    -> maker mkWord32        >>=                 Just . FileTriggerPriorities
+    5085    -> maker mkWord32        >>=                 Just . TransFileTriggerPriorities
+    5086    -> maker mkStringArray   >>=                 Just . FileTriggerConds
+    5087    -> maker mkStringArray   >>=                 Just . FileTriggerType
+    5088    -> maker mkStringArray   >>=                 Just . TransFileTriggerConds
+    5089    -> maker mkStringArray   >>=                 Just . TransFileTriggerType
+    5090    -> maker mkStringArray   >>=                 Just . FileSignatures
+    5091    -> maker mkWord32        >>= listToMaybe >>= Just . FileSignatureLength
 
     _       -> Nothing
  where
