@@ -14,7 +14,6 @@
 -- License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
@@ -132,6 +131,4 @@ parseRPMC :: MonadError String m => Conduit C.ByteString m RPM
 parseRPMC =
     conduitParserEither parseRPM .| consumer
  where
-    consumer = awaitForever $ \case
-        Left err       -> throwError $ errorMessage err
-        Right (_, rpm) -> yield rpm
+    consumer = awaitForever $ either (throwError . errorMessage) (yield . snd)

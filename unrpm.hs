@@ -77,10 +77,7 @@ processRPM path = do
            .| decompress Nothing
            .| readCPIO
            .| DCC.mapM_ (liftIO . writeCpioEntry)
-
-    case result of
-        Left e  -> print e
-        Right _ -> return ()
+    either print return result
 
 main :: IO ()
 main = do
