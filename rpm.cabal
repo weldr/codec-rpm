@@ -23,6 +23,7 @@ library
                         conduit-combinators,
                         conduit-extra,
                         mtl >= 2.2.1,
+                        parsec,
                         pretty >= 1.1.2.0,
                         resourcet
 
