@@ -33,7 +33,7 @@ Executing unit tests
 
     $ cabal sandbox init
     $ cabal install --dependencies-only --enable-tests
-    $ cabal test
+    $ cabal test --show-details=always
     Preprocessing library rpm-1...
     Preprocessing test suite 'tests' for rpm-1...
     Running 1 test suites...
@@ -47,5 +47,5 @@ Produce code coverage report
 
     $ cabal sandbox init
     $ cabal install --enable-tests --enable-coverage
-    $ cabal test
+    $ cabal test --show-details=always
     $ firefox ./dist/hpc/vanilla/tix/*/hpc_index.html
