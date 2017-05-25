@@ -99,12 +99,11 @@ executable rpm2json
 test-suite tests
     type:               exitcode-stdio-1.0
     hs-source-dirs:     tests
-    main-is:            Main.hs
+    main-is:            Spec.hs
     
     build-depends:      HUnit,
+                        hspec,
                         base >= 4.7 && < 5.0,
-                        tasty,
-                        tasty-hunit,
                         rpm
 
     default-language:   Haskell2010
