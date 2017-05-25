@@ -1,20 +1,16 @@
-module RPM.Version.Tests(vercmpTests)
- where
+module RPM.VersionSpec (main, spec) where
 
-import Test.Tasty(TestTree, testGroup)
-import Test.Tasty.HUnit(assertEqual, testCase)
-
+import Test.Hspec
+import Data.Foldable(forM_)
 import RPM.Version(vercmp)
 
-vercmpTests :: TestTree
-vercmpTests = testGroup "vercmp tests" $ map verTestCase versionCases
- where
-    verTestCase :: (String, String, Ordering) -> TestTree
-    verTestCase (verA, verB, ord) = testCase (verA ++ " " ++ show ord ++ " " ++ verB) $
-        assertEqual "" ord (vercmp verA verB)
+main :: IO ()
+main = hspec spec
 
-    versionCases :: [(String, String, Ordering)]
-    versionCases = [ ("1.0", "1.0", EQ),
+spec :: Spec
+spec = describe "RPM.Version.vercmp" $ do
+    let versionCases = [
+                     ("1.0", "1.0", EQ),
                      ("1.0", "2.0", LT),
                      ("2.0", "1.0", GT),
 
@@ -101,3 +97,7 @@ vercmpTests = testGroup "vercmp tests" $ map verTestCase versionCases
                      ("1.0~rc1~git123", "1.0~rc1", LT),
                      ("1.0~rc1", "1.0~rc1~git123", GT)
                    ]
+
+    forM_ versionCases $ \(verA, verB, ord) ->
+      it (verA ++ " " ++ show ord ++ " " ++ verB) $
+        vercmp verA verB `shouldBe` ord
