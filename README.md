@@ -49,3 +49,22 @@ Produce code coverage report
     $ cabal install --enable-tests --enable-coverage
     $ cabal test --show-details=always
     $ firefox ./dist/hpc/vanilla/tix/*/hpc_index.html
+
+Testing in Haskell
+==================
+
+The recommended way to test this project is to use
+[Hspec](https://hspec.github.io/) for annotating unit tests.
+For starters you can try adding cases which extend code coverage.
+
+It is also recommended to use property based testing with
+QuickCheck (and Hspec) where it makes sense. Property based tools
+automatically generates hundreds/thousands of input variants and
+execute the function under test with them. This validates that
+specific conditions (aka properties of the function) are always met.
+This is useful with pure functions. For more information see:
+
+- http://blog.jessitron.com/2013/04/property-based-testing-what-is-it.html
+- http://book.realworldhaskell.org/read/testing-and-quality-assurance.html
+- https://en.wikibooks.org/wiki/Haskell/Testing
+- http://hspec.github.io/quickcheck.html
