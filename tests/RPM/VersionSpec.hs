@@ -1,15 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module RPM.VersionSpec (main, spec) where
+module RPM.VersionSpec (spec) where
 
 import           Test.Hspec
 import           Data.Foldable(forM_)
 import qualified Data.Text as T
 import           RPM.Version(DepRequirement(..), EVR(..), parseDepRequirement, parseEVR, satisfies, vercmp)
 import qualified RPM.Version as RPM(DepOrdering(..))
-
-main :: IO ()
-main = hspec spec
 
 spec :: Spec
 spec = do
