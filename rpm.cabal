@@ -106,6 +106,7 @@ test-suite tests
     build-depends:      HUnit,
                         hspec,
                         base >= 4.7 && < 5.0,
+                        bytestring,
                         rpm,
                         text
 
