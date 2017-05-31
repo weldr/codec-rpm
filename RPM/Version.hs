@@ -14,6 +14,7 @@
 -- License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 {-# LANGUAGE MultiWayIf #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module RPM.Version(DepOrdering(..),
                    DepRequirement(..),
@@ -28,6 +29,7 @@ import           Data.Char(digitToInt, isAsciiLower, isAsciiUpper, isDigit, isSp
 import           Data.Maybe(fromMaybe)
 import           Data.Monoid((<>))
 import qualified Data.Ord as Ord
+import qualified Data.Text as T
 import           Data.Word(Word32)
 import           Text.Parsec
 
@@ -36,8 +38,8 @@ import Prelude hiding(EQ, GT, LT)
 -- optional epoch, version, release
 data EVR = EVR {
     epoch :: Maybe Word32,
-    version :: String,
-    release :: String }
+    version :: T.Text,
+    release :: T.Text }
  deriving(Show)
 
 -- for Ord and Eq, an epoch of Nothing is the same as an epoch of 0.
@@ -55,49 +57,47 @@ instance Ord EVR where
 data DepOrdering = LT | LTE | EQ | GTE | GT
  deriving(Eq, Show)
 
-data DepRequirement = DepRequirement String (Maybe (DepOrdering, EVR))
+data DepRequirement = DepRequirement T.Text (Maybe (DepOrdering, EVR))
  deriving (Eq, Show)
 
-vercmp :: String -> String -> Ordering
+vercmp :: T.Text -> T.Text -> Ordering
 vercmp a b = let
     -- strip out all non-version characters
     -- keep in mind the strings may be empty after this
     a' = dropSeparators a
     b' = dropSeparators b
-  in
-    case (a', b') of
-        -- Nothing left means the versions are equal
-        ([], [])   -> Ord.EQ
-        -- tilde ls less than everything, including an empty string
-        ('~':aTail, '~':bTail) -> vercmp aTail bTail
-        ('~':_, _) -> Ord.LT
-        (_, '~':_) -> Ord.GT
-        -- otherwise, if one of the strings is null, the other is greater
-        ([], _)    -> Ord.LT
-        (_, [])    -> Ord.GT
-        -- Now we have two non-null strings, starting with a non-tilde version character
-        _          -> let 
-            -- rpm compares strings by digit and non-digit components, so grab the first
-            -- component of one type
-            fn = if isDigit (head a') then isDigit else isAsciiAlpha
-            (prefixA, suffixA) = span fn a'
-            (prefixB, suffixB) = span fn b'
-         in
-            -- if one prefix is a number and the other is a string, the one
-            -- that is a number is the more recent version number
-            if | isDigit (head a') && (not . isDigit) (head b') -> Ord.GT
-               | (not . isDigit) (head a') && isDigit (head b') -> Ord.LT
-               | isDigit (head a') -> (prefixA `compareAsInts` prefixB) `mappend` (suffixA `vercmp` suffixB)
-               | otherwise -> (prefixA `compare` prefixB) `mappend` (suffixA `vercmp` suffixB)
-  where
-    compareAsInts :: String -> String -> Ordering
+
+    -- rpm compares strings by digit and non-digit components, so grab the first
+    -- component of one type
+    fn = if isDigit (T.head a') then isDigit else isAsciiAlpha
+    (prefixA, suffixA) = T.span fn a'
+    (prefixB, suffixB) = T.span fn b'
+ in
+       -- Nothing left means the versions are equal
+    if | T.null a' && T.null b'                             -> Ord.EQ
+       -- tilde ls less than everything, including an empty string
+       | ("~" `T.isPrefixOf` a') && ("~" `T.isPrefixOf` b') -> vercmp (T.tail a') (T.tail b')
+       | ("~" `T.isPrefixOf` a')                            -> Ord.LT
+       | ("~" `T.isPrefixOf` b')                            -> Ord.GT
+       -- otherwise, if one of the strings is null, the other is greater
+       | (T.null a')                                        -> Ord.LT
+       | (T.null b')                                        -> Ord.GT
+       -- Now we have two non-null strings, starting with a non-tilde version character
+       -- If one prefix is a number and the other is a string, the one that is a number
+       -- is greater.
+       | isDigit (T.head a') && (not . isDigit) (T.head b') -> Ord.GT
+       | (not . isDigit) (T.head a') && isDigit (T.head b') -> Ord.LT
+       | isDigit (T.head a')                                -> (prefixA `compareAsInts` prefixB) <> (suffixA `vercmp` suffixB)
+       | otherwise                                          -> (prefixA `compare` prefixB) <> (suffixA `vercmp` suffixB)
+ where
+    compareAsInts :: T.Text -> T.Text -> Ordering
     -- the version numbers can overflow Int, so strip leading 0's and do a string compare,
     -- longest string wins
     compareAsInts x y =
-        let x' = dropWhile (== '0') x
-            y' = dropWhile (== '0') y
+        let x' = T.dropWhile (== '0') x
+            y' = T.dropWhile (== '0') y
         in 
-            if length x' > length y' then Ord.GT
+            if T.length x' > T.length y' then Ord.GT
             else x' `compare` y'
 
     -- isAlpha returns any unicode alpha, but we just want ASCII characters
@@ -108,10 +108,10 @@ vercmp a b = let
     isVersionChar :: Char -> Bool
     isVersionChar x = isDigit x || isAsciiAlpha x || x == '~'
 
-    dropSeparators :: String -> String
-    dropSeparators = dropWhile (not . isVersionChar)
+    dropSeparators :: T.Text -> T.Text
+    dropSeparators = T.dropWhile (not . isVersionChar)
 
-{-# ANN satisfies "HLint: ignore Redundant if" #-}
+{-# ANN satisfies ("HLint: ignore Redundant if" :: String) #-}
 satisfies :: DepRequirement -> DepRequirement -> Bool
 satisfies (DepRequirement name1 ver1) (DepRequirement name2 ver2) =
     -- names have to match
@@ -129,8 +129,8 @@ satisfies (DepRequirement name1 ver1) (DepRequirement name2 ver2) =
     -- If *both* sides have no release, the regular rules apply, so x >= 1.0 does not satisfy x < 1.0
 
     satisfiesVersion (Just (o1, v1)) (Just (o2, v2))
-        | null (release v1) && (not . null) (release v2) && compareEV v1 v2 && isEq o1 = True
-        | null (release v2) && (not . null) (release v1) && compareEV v1 v2 && isEq o2 = True
+        | T.null (release v1) && (not . T.null) (release v2) && compareEV v1 v2 && isEq o1 = True
+        | T.null (release v2) && (not . T.null) (release v1) && compareEV v1 v2 && isEq o2 = True
         | otherwise =
             case compare v1 v2 of
                 -- e1 < e2, true if >[=] e1 || <[=] e2
@@ -157,16 +157,16 @@ satisfies (DepRequirement name1 ver1) (DepRequirement name2 ver2) =
 
 -- parsers for version strings
 -- the EVR Parsec is shared by the EVR and DepRequirement parsers
-parseEVRParsec :: Parsec String () EVR
+parseEVRParsec :: Parsec T.Text () EVR
 parseEVRParsec = do
     e <- optionMaybe $ try parseEpoch
     v <- many1 versionChar
     r <- try parseRelease <|> return ""
     eof
 
-    return EVR{epoch=e, version=v, release=r}
+    return EVR{epoch=e, version=T.pack v, release=T.pack r}
  where
-    parseEpoch :: Parsec String () Word32
+    parseEpoch :: Parsec T.Text () Word32
     parseEpoch = do
         e <- many1 digit
         _ <- char ':'
@@ -176,7 +176,7 @@ parseEVRParsec = do
      where
         maxW32 = toInteger (maxBound :: Word32)
 
-        parseInteger :: Integer -> String -> Parsec String () Word32
+        parseInteger :: Integer -> String -> Parsec T.Text () Word32
         parseInteger acc []     = return $ fromInteger acc
         parseInteger acc (x:xs) = let
             newAcc = (acc * (10 :: Integer)) + toInteger (digitToInt x)
@@ -190,10 +190,10 @@ parseEVRParsec = do
 
     versionChar = digit <|> upper <|> lower <|> oneOf "._+%{}~"
 
-parseEVR :: String -> Either ParseError EVR
+parseEVR :: T.Text -> Either ParseError EVR
 parseEVR = parse parseEVRParsec ""
 
-parseDepRequirement :: String -> Either ParseError DepRequirement
+parseDepRequirement :: T.Text -> Either ParseError DepRequirement
 parseDepRequirement input = parse parseDepRequirement' "" input
  where
     parseDepRequirement' = do
@@ -205,11 +205,11 @@ parseDepRequirement input = parse parseDepRequirement' "" input
         -- string as a name. This way RPMs with bad version strings in Requires, which of course exist, will
         -- match against the full string.
         case reqver of
-            Just _  -> return $ DepRequirement reqname reqver
+            Just _  -> return $ DepRequirement (T.pack reqname) reqver
             Nothing -> return $ DepRequirement input Nothing
 
     -- check lte and gte first, since they overlap lt and gt
-    parseOperator :: Parsec String () DepOrdering
+    parseOperator :: Parsec T.Text () DepOrdering
     parseOperator = lte <|> gte <|> eq <|> lt <|> gt
 
     eq  = try (string "=")  >> return EQ
@@ -218,7 +218,7 @@ parseDepRequirement input = parse parseDepRequirement' "" input
     lte = try (string "<=") >> return LTE
     gte = try (string ">=") >> return GTE
 
-    parseDepVersion :: Parsec String () (DepOrdering, EVR)
+    parseDepVersion :: Parsec T.Text () (DepOrdering, EVR)
     parseDepVersion = do
         oper <- parseOperator
         spaces

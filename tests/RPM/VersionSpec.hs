@@ -1,8 +1,11 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module RPM.VersionSpec (main, spec) where
 
-import Test.Hspec
-import Data.Foldable(forM_)
-import RPM.Version(DepRequirement(..), EVR(..), parseDepRequirement, parseEVR, satisfies, vercmp)
+import           Test.Hspec
+import           Data.Foldable(forM_)
+import qualified Data.Text as T
+import           RPM.Version(DepRequirement(..), EVR(..), parseDepRequirement, parseEVR, satisfies, vercmp)
 import qualified RPM.Version as RPM(DepOrdering(..))
 
 main :: IO ()
@@ -101,7 +104,7 @@ spec = do
                        ]
 
         forM_ vercmpCases $ \(verA, verB, ord) ->
-          it (verA ++ " " ++ show ord ++ " " ++ verB) $
+          it (T.unpack verA ++ " " ++ show ord ++ " " ++ T.unpack verB) $
             vercmp verA verB `shouldBe` ord
 
     describe "RPM.Version.EVR Ord" $ do
@@ -280,7 +283,7 @@ spec = do
               ]
 
         forM_ satisfiesCases $ \(v1, v2, b) ->
-            it (v1 ++ " " ++ v2 ++ ": " ++ show b) $
+            it (T.unpack v1 ++ " " ++ T.unpack v2 ++ ": " ++ show b) $
                 case (parseDepRequirement v1, parseDepRequirement v2) of
                     (Right verA, Right verB) -> satisfies verA verB `shouldBe` b
                     _                        -> expectationFailure "Unable to parse versions"
@@ -326,7 +329,7 @@ spec = do
         -- as the either in the test data (ParseError vs. ()). Unwrap the Right values to compare EVRs,
         -- and for parse errors just check that parseEVR returns a Left.
         forM_ parseEVRCases $ \(str, result) ->
-            it str $ case (result, parseEVR str) of
+            it (T.unpack str) $ case (result, parseEVR str) of
                 (Right evr1, Right evr2) -> evr1 `shouldBe` evr2
                 (Left _, Right evr)      -> expectationFailure $ "bad string parsed as: " ++ show evr
                 (Right _, Left err)      -> expectationFailure $ "unable to parse valid EVR: " ++ show err
@@ -347,6 +350,6 @@ spec = do
                 ]
 
         forM_ parseDepRequirementCases $ \(str, result) ->
-            it str $ case parseDepRequirement str of
+            it (T.unpack str) $ case parseDepRequirement str of
                 Right dr -> dr `shouldBe` result
                 Left err -> expectationFailure $ "failed to parse DepRequirement: " ++ show err

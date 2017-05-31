@@ -25,7 +25,8 @@ library
                         mtl >= 2.2.1,
                         parsec,
                         pretty >= 1.1.2.0,
-                        resourcet
+                        resourcet,
+                        text
 
     default-language:   Haskell2010
 
@@ -105,7 +106,8 @@ test-suite tests
     build-depends:      HUnit,
                         hspec,
                         base >= 4.7 && < 5.0,
-                        rpm
+                        rpm,
+                        text
 
     default-language:   Haskell2010
 
