@@ -450,3 +450,69 @@ spec = describe "RPM.Tags" $
             tag == Just (Description store) || -- 1005
             tag == Just (Group store) -- 1016
             `shouldBe` True
+
+    -- tests for tags which use mkString
+    forM_ [269,
+            1000, 1001, 1002, 1007, 1010, 1011, 1014, 1015,
+            1020, 1021, 1022, 1023, 1024, 1025, 1026, 1044,
+            1056, 1057, 1058, 1063, 1064, 1079, 1094,
+            1122, 1123, 1124, 1125, 1126, 1131, 1132, 1137,
+            1151, 1152, 1155, 1163, 1170, 1181, 1196,
+            5012, 5013, 5014, 5015, 5016, 5034, 5062, 5083] $ \tagInt -> do
+      it ("returns Nothing for `tag' == " ++ show tagInt ++ " and `ty' != 6") $ do
+        let store = BS.pack [0]
+        let tag = mkTag store tagInt 99 0 0
+        tag `shouldBe` Nothing
+
+      it ("returns correct value for `tag' == " ++ show tagInt) $ do
+        let store = BC.pack "test-me"
+        let tag = mkTag store tagInt 6 0 7
+
+        tag == Just (SHA1Header "test-me") || -- 269
+            tag == Just (Name "test-me") || -- 1000
+            tag == Just (Version "test-me") || -- 1001
+            tag == Just (Release "test-me") || -- 1002
+            tag == Just (BuildHost "test-me") || -- 1007
+            tag == Just (Distribution "test-me") || -- 1010
+            tag == Just (Vendor "test-me") || -- 1011
+            tag == Just (License "test-me") || -- 1014
+            tag == Just (Packager "test-me") || -- 1015
+            tag == Just (URL "test-me") || -- 1020
+            tag == Just (OS "test-me") || -- 1021
+            tag == Just (Arch "test-me") || -- 1022
+            tag == Just (PreIn "test-me") || -- 1023
+            tag == Just (PostIn "test-me") || -- 1024
+            tag == Just (PreUn "test-me") || -- 1025
+            tag == Just (PostUn "test-me") || -- 1026
+            tag == Just (SourceRPM "test-me") || -- 1044
+            tag == Just (INTERNAL (DEPRECATED (DefaultPrefix "test-me"))) || -- 1056
+            tag == Just (INTERNAL (OBSOLETE (BuildRoot "test-me"))) || -- 1057
+            tag == Just (INTERNAL (DEPRECATED (InstallPrefix "test-me"))) || -- 1058
+            tag == Just (INTERNAL (AutoReqProv "test-me")) || -- 1063
+            tag == Just (RPMVersion "test-me") || -- 1064
+            tag == Just (VerifyScript "test-me") || -- 1079
+            tag == Just (Cookie "test-me") || -- 1094
+            tag == Just (OptFlags "test-me") || -- 1122
+            tag == Just (DistURL "test-me") || -- 1123
+            tag == Just (PayloadFormat "test-me") || -- 1124
+            tag == Just (PayloadCompressor "test-me") || -- 1125
+            tag == Just (PayloadFlags "test-me") || -- 1126
+            tag == Just (INTERNAL (OBSOLETE (RHNPlatform "test-me"))) || -- 1131
+            tag == Just (Platform "test-me") || -- 1132
+            tag == Just (INTERNAL (OBSOLETE (CachePkgPath "test-me"))) || -- 1137
+            tag == Just (PreTrans "test-me") || -- 1151
+            tag == Just (PostTrans "test-me") || -- 1152
+            tag == Just (DistTag "test-me") || -- 1155
+            tag == Just (UNIMPLEMENTED (CVSID "test-me")) || -- 1163
+            tag == Just (UNIMPLEMENTED (PackageOrigin "test-me")) || -- 1170
+            tag == Just (UNIMPLEMENTED (RepoTag "test-me")) || -- 1181
+            tag == Just (NVRA "test-me") || -- 1196
+            tag == Just (BugURL "test-me") || -- 5012
+            tag == Just (EVR "test-me") || -- 5013
+            tag == Just (NVR "test-me") || -- 5014
+            tag == Just (NEVR "test-me") || -- 5015
+            tag == Just (NEVRA "test-me") || -- 5016
+            tag == Just (PolicyVCS "test-me") || -- 5034
+            tag == Just (Encoding "test-me") || -- 5062
+            tag == Just (INTERNAL (RemovePathPostFixes "test-me")) -- 5083
+            `shouldBe` True
