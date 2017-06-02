@@ -516,3 +516,140 @@ spec = describe "RPM.Tags" $
             tag == Just (Encoding "test-me") || -- 5062
             tag == Just (INTERNAL (RemovePathPostFixes "test-me")) -- 5083
             `shouldBe` True
+
+    -- tests for tags which use mkStringArray
+    forM_ [100, 266,
+            1017, 1018, 1019, 1027, 1035, 1036, 1039, 1040,
+            1047, 1049, 1050, 1054, 1055, 1059, 1060, 1061,
+            1062, 1065, 1066, 1067, 1081, 1082, 1085, 1086,
+            1087, 1088, 1089, 1090, 1091, 1092, 1097, 1098,
+            1099, 1113, 1115, 1117, 1118, 1120, 1121, 1133,
+            1135, 1142, 1147, 1148, 1149, 1150, 1153, 1154, 1156,
+            1157, 1159, 1160, 1164, 1165, 1166, 1167, 1167,
+            1168, 1169, 1178, 1182, 1183, 1186, 1188,
+            5000, 5001, 5002, 5003, 5005, 5006, 5007, 5010,
+            5029, 5030, 5031, 5035, 5036, 5038, 5039, 5040,
+            5041, 5042, 5043, 5044, 5046, 5047, 5049, 5050,
+            5052, 5053, 5055, 5056, 5058, 5059, 5060, 5061,
+            5066, 5067, 5069, 5071, 5076, 5077, 5079, 5081,
+             5086, 5087, 5088, 5089, 5090] $ \tagInt -> do
+      it ("returns Nothing for `tag' == " ++ show tagInt ++ " and `ty' != 8") $ do
+        let store = BS.pack [0]
+        let tag = mkTag store tagInt 99 0 0
+        tag `shouldBe` Nothing
+
+      it ("returns correct value for `tag' == " ++ show tagInt) $ do
+        let store = BC.pack "test-me"
+        let tag = mkTag store tagInt 8 0 7
+
+        tag == Just (HeaderI18NTable ["test-me"]) || -- 100
+            tag == Just (PubKeys ["test-me"]) || -- 266
+            tag == Just (INTERNAL (ChangeLog ["test-me"])) || -- 1017
+            tag == Just (Source ["test-me"]) || -- 1018
+            tag == Just (Patch ["test-me"]) || -- 1019
+            tag == Just (OBSOLETE (OldFileNames ["test-me"])) || -- 1027
+            tag == Just (FileMD5s ["test-me"]) || -- 1035
+            tag == Just (FileLinkTos ["test-me"]) || -- 1036
+            tag == Just (FileUserName ["test-me"]) || -- 1039
+            tag == Just (FileGroupName ["test-me"]) || -- 1040
+            tag == Just (ProvideName ["test-me"]) || -- 1047
+            tag == Just (RequireName ["test-me"]) || -- 1049
+            tag == Just (RequireVersion ["test-me"]) || -- 1050
+            tag == Just (ConflictName ["test-me"]) || -- 1054
+            tag == Just (ConflictVersion ["test-me"]) || -- 1055
+            tag == Just (ExcludeArch ["test-me"]) || -- 1059
+            tag == Just (ExcludeOS ["test-me"]) || -- 1060
+            tag == Just (ExclusiveArch ["test-me"]) || -- 1061
+            tag == Just (ExclusiveOS ["test-me"]) || -- 1062
+            tag == Just (TriggerScripts ["test-me"]) || -- 1065
+            tag == Just (TriggerName ["test-me"]) || -- 1066
+            tag == Just (TriggerVersion ["test-me"]) || -- 1067
+            tag == Just (ChangeLogName ["test-me"]) || -- 1081
+            tag == Just (ChangeLogText ["test-me"]) || -- 1082
+            tag == Just (PreInProg ["test-me"]) || -- 1085
+            tag == Just (PostInProg ["test-me"]) || -- 1086
+            tag == Just (PreUnProg ["test-me"]) || -- 1087
+            tag == Just (PostUnProg ["test-me"]) || -- 1088
+            tag == Just (BuildArchs ["test-me"]) || -- 1089
+            tag == Just (ObsoleteName ["test-me"]) || -- 1090
+            tag == Just (VerifyScriptProg ["test-me"]) || -- 1091
+            tag == Just (TriggerScriptProg ["test-me"]) || -- 1092
+            tag == Just (FileLangs ["test-me"]) || -- 1097
+            tag == Just (Prefixes ["test-me"]) || -- 1098
+            tag == Just (InstPrefixes ["test-me"]) || -- 1099
+            tag == Just (ProvideVersion ["test-me"]) || -- 1113
+            tag == Just (ObsoleteVersion ["test-me"]) || -- 1115
+            tag == Just (BaseNames ["test-me"]) || -- 1117
+            tag == Just (DirNames ["test-me"]) || -- 1118
+            tag == Just (OrigBaseNames ["test-me"]) || -- 1120
+            tag == Just (OrigDirNames ["test-me"]) || -- 1121
+            tag == Just (DEPRECATED (PatchesName ["test-me"])) || -- 1133
+            tag == Just (DEPRECATED (PatchesVersion ["test-me"])) || -- 1135
+            tag == Just (ClassDict ["test-me"]) || -- 1142
+            tag == Just (OBSOLETE (FileContexts ["test-me"])) || -- 1147
+            tag == Just (FSContexts ["test-me"]) || -- 1148
+            tag == Just (ReContexts ["test-me"]) || -- 1149
+            tag == Just (Policies ["test-me"]) || -- 1150
+            tag == Just (PreTransProg ["test-me"]) || -- 1153
+            tag == Just (PostTransProg ["test-me"]) || -- 1154
+            tag == Just (OBSOLETE (OldSuggestsName ["test-me"])) || -- 1156
+            tag == Just (OBSOLETE (OldSuggestsVersion ["test-me"])) || -- 1157
+            tag == Just (OBSOLETE (OldEnhancesName ["test-me"])) || -- 1159
+            tag == Just (OBSOLETE (OldEnhancesVersion ["test-me"])) || -- 1160
+            tag == Just (UNIMPLEMENTED (BLinkPkgID ["test-me"])) || -- 1164
+            tag == Just (UNIMPLEMENTED (BLinkHdrID ["test-me"])) || -- 1165
+            tag == Just (UNIMPLEMENTED (BLinkNEVRA ["test-me"])) || -- 1166
+            tag == Just (UNIMPLEMENTED (FLinkPkgID ["test-me"])) || -- 1167
+            tag == Just (UNIMPLEMENTED (FLinkHdrID ["test-me"])) || -- 1168
+            tag == Just (UNIMPLEMENTED (FLinkNEVRA ["test-me"])) || -- 1169
+            tag == Just (UNIMPLEMENTED (Variants["test-me"])) || -- 1178
+            tag == Just (UNIMPLEMENTED (Keywords["test-me"])) || -- 1182
+            tag == Just (UNIMPLEMENTED (BuildPlatforms["test-me"])) || -- 1183
+            tag == Just (UNIMPLEMENTED (XattrsDict["test-me"])) || -- 1186
+            tag == Just (UNIMPLEMENTED (DepAttrsDict["test-me"])) || -- 1188
+            tag == Just (FileNames ["test-me"]) || -- 5000
+            tag == Just (FileProvide ["test-me"]) || -- 5001
+            tag == Just (FileRequire ["test-me"]) || -- 5002
+            tag == Just (UNIMPLEMENTED (FSNames ["test-me"])) || -- 5003
+            tag == Just (TriggerConds ["test-me"]) || -- 5005
+            tag == Just (TriggerType ["test-me"]) || -- 5006
+            tag == Just (OrigFileNames ["test-me"]) || -- 5007
+            tag == Just (FileCaps ["test-me"]) || -- 5010
+            tag == Just (UNIMPLEMENTED (Collections ["test-me"])) || -- 5029
+            tag == Just (PolicyNames ["test-me"]) || -- 5030
+            tag == Just (PolicyTypes ["test-me"]) || -- 5031
+            tag == Just (OrderName ["test-me"]) || -- 5035
+            tag == Just (OrderVersion ["test-me"]) || -- 5036
+            tag == Just (UNIMPLEMENTED (MSSFManifest ["test-me"])) || -- 5038
+            tag == Just (UNIMPLEMENTED (MSSFDomain ["test-me"])) || -- 5039
+            tag == Just (InstFileNames ["test-me"]) || -- 5040
+            tag == Just (RequireNEVRs ["test-me"]) || -- 5041
+            tag == Just (ProvideNEVRs ["test-me"]) || -- 5042
+            tag == Just (ObsoleteNEVRs ["test-me"]) || -- 5043
+            tag == Just (ConflictNEVRs ["test-me"]) || -- 5044
+            tag == Just (RecommendName ["test-me"]) || -- 5046
+            tag == Just (RecommendVersion ["test-me"]) || -- 5047
+            tag == Just (SuggestName ["test-me"]) || -- 5049
+            tag == Just (SuggestVersion ["test-me"]) || -- 5050
+            tag == Just (SupplementName ["test-me"]) || -- 5052
+            tag == Just (SupplementVersion ["test-me"]) || -- 5053
+            tag == Just (EnhanceName ["test-me"]) || -- 5055
+            tag == Just (EnhanceVersion ["test-me"]) || -- 5056
+            tag == Just (RecommendNEVRs ["test-me"]) || -- 5058
+            tag == Just (SuggestNEVRs ["test-me"]) || -- 5059
+            tag == Just (SupplementNEVRs ["test-me"]) || -- 5060
+            tag == Just (EnhanceNEVRs ["test-me"]) || -- 5061
+            tag == Just (FileTriggerScripts ["test-me"]) || -- 5066
+            tag == Just (FileTriggerScriptProg ["test-me"]) || -- 5067
+            tag == Just (FileTriggerName ["test-me"]) || -- 5069
+            tag == Just (FileTriggerVersion ["test-me"]) || -- 5071
+            tag == Just (TransFileTriggerScripts ["test-me"]) || -- 5076
+            tag == Just (TransFileTriggerScriptProg ["test-me"]) || -- 5077
+            tag == Just (TransFileTriggerName ["test-me"]) || -- 5079
+            tag == Just (TransFileTriggerVersion ["test-me"]) || -- 5081
+            tag == Just (FileTriggerConds ["test-me"]) || -- 5086
+            tag == Just (FileTriggerType ["test-me"]) || -- 5087
+            tag == Just (TransFileTriggerConds ["test-me"]) || -- 5088
+            tag == Just (TransFileTriggerType ["test-me"]) || -- 5089
+            tag == Just (FileSignatures ["test-me"]) -- 5090
+            `shouldBe` True
