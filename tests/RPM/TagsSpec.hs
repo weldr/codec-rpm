@@ -298,6 +298,29 @@ spec = describe "RPM.Tags" $
             tag == Just (INTERNAL (RemovePathPostFixes "test-me")) -- 5083
             `shouldBe` True
 
+    -- tests for tags which use mkBinary
+    forM_ [259, 261, 262, 267, 268,
+            1012, 1013, 1043, 1146] $ \tagInt -> do
+      it ("returns Nothing for `tag' == " ++ show tagInt ++ " and `ty' != 7") $ do
+        let store = BS.pack [0]
+        let tag = mkTag store tagInt 99 0 0
+        tag `shouldBe` Nothing
+
+      it ("returns correct value for `tag' == " ++ show tagInt) $ do
+        let store = BC.pack "test-me"
+        let tag = mkTag store tagInt 7 0 7
+
+        tag == Just (SigPGP store) || -- 259
+            tag == Just (SigMD5 store) || -- 261
+            tag == Just (SigGPG store) || -- 262
+            tag == Just (DSAHeader store) || -- 267
+            tag == Just (RSAHeader store) || -- 268
+            tag == Just (GIF store) || -- 1012
+            tag == Just (XPM store) || -- 1013
+            tag == Just (Icon store) || -- 1043
+            tag == Just (SourcePkgID store) -- 1146
+            `shouldBe` True
+
     -- tests for tags which use mkStringArray
     forM_ [100, 266,
             1017, 1018, 1019, 1027, 1035, 1036, 1039, 1040,
