@@ -653,3 +653,19 @@ spec = describe "RPM.Tags" $
             tag == Just (TransFileTriggerType ["test-me"]) || -- 5089
             tag == Just (FileSignatures ["test-me"]) -- 5090
             `shouldBe` True
+
+    -- tests for tags which use mkI18NString
+    forM_ [1004, 1005, 1016] $ \tagInt -> do
+      it ("returns Nothing for `tag' == " ++ show tagInt ++ " and `ty' != 9") $ do
+        let store = BS.pack [0]
+        let tag = mkTag store tagInt 99 0 0
+        tag `shouldBe` Nothing
+
+      it ("returns correct value for `tag' == " ++ show tagInt) $ do
+        let store = BC.pack "test-me"
+        let tag = mkTag store tagInt 9 0 7
+
+        tag == Just (Summary store) || -- 1004
+            tag == Just (Description store) || -- 1005
+            tag == Just (Group store) -- 1016
+            `shouldBe` True
