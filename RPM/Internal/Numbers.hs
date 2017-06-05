@@ -13,8 +13,7 @@
 -- You should have received a copy of the GNU Lesser General Public
 -- License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-module RPM.Internal.Numbers(asWord8,
-                            asWord16,
+module RPM.Internal.Numbers(asWord16,
                             asWord32,
                             asWord64)
  where
@@ -22,9 +21,6 @@ module RPM.Internal.Numbers(asWord8,
 import           Data.Bits((.|.), shift)
 import qualified Data.ByteString as BS
 import           Data.Word
-
-asWord8 :: BS.ByteString -> Word8
-asWord8 bs = fromIntegral (bs `BS.index` 0)
 
 asWord16 :: BS.ByteString -> Word16
 asWord16 bs = fromIntegral (bs `BS.index` 0) `shift` 8 .|.
