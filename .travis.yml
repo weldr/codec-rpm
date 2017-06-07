@@ -11,7 +11,7 @@ before_install:
 script:
   - ~/.cabal/bin/hlint .
   - cabal install --dependencies-only --enable-tests
-  - cabal configure --enable-tests --enable-coverage --enable-library-coverage
+  - cabal configure --enable-tests --enable-coverage --ghc-option=-DTEST
   - cabal build
   - cabal test --show-details=always
 
