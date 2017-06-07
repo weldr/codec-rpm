@@ -105,8 +105,10 @@ test-suite tests
     
     build-depends:      HUnit,
                         hspec,
+                        hspec-attoparsec,
                         base >= 4.7 && < 5.0,
                         bytestring,
+                        attoparsec,
                         rpm,
                         text
 

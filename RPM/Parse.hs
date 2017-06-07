@@ -17,7 +17,12 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-module RPM.Parse(parseRPM,
+module RPM.Parse(
+#ifdef TEST
+                 parseLead,
+                 parseSectionHeader,
+#endif
+                 parseRPM,
                  parseRPMC)
  where
 
