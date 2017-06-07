@@ -16,7 +16,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE FlexibleContexts #-}
-{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 
 module RPM.Parse(parseRPM,
                  parseRPMC)
@@ -25,6 +24,7 @@ module RPM.Parse(parseRPM,
 #if !MIN_VERSION_base(4,8,0)
 import           Control.Applicative((<$>))
 #endif
+import           Control.Monad(void)
 import           Control.Monad.Except(MonadError, throwError)
 import           Conduit((.|), Conduit, awaitForever, yield)
 import           Data.Attoparsec.Binary
@@ -44,7 +44,7 @@ import RPM.Types(Header(..), Lead(..), RPM(..), SectionHeader(..))
 parseLead :: Parser Lead
 parseLead = do
     -- Verify this is an RPM by checking the first four bytes.
-    word32be 0xedabeedb
+    void $ word32be 0xedabeedb
 
     rpmMajor <- anyWord8
     rpmMinor <- anyWord8
@@ -55,7 +55,7 @@ parseLead = do
     rpmSigType <- anyWord16be
 
     -- Skip 16 reserved bytes at the end of the lead.
-    take 16
+    void $ take 16
     
     return Lead { rpmMajor,
                   rpmMinor,
@@ -68,11 +68,11 @@ parseLead = do
 parseSectionHeader :: Parser SectionHeader
 parseSectionHeader = do
     -- Verify this is a header section header by checking the first three bytes.
-    word8 0x8e >> word8 0xad >> word8 0xe8
+    void $ word8 0x8e >> word8 0xad >> word8 0xe8
 
     sectionVersion <- anyWord8
     -- Skip four reserved bytes.
-    take 4
+    void $ take 4
     sectionCount <- anyWord32be
     sectionSize <- anyWord32be
 
@@ -111,7 +111,7 @@ parseRPM = do
     rpmLead <- parseLead
     -- Then comes the signature, which is like a regular section except it's also padded.
     sig <- parseSection
-    take (signaturePadding sig)
+    void $ take (signaturePadding sig)
     -- And then comes the real header.  There could be several, but for now there's only ever one.
     hdr <- parseSection
     rpmArchive <- takeByteString
