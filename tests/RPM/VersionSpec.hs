@@ -176,6 +176,7 @@ spec = do
               ("thing <= 1.0",   "thing >= 1.0",    True),
               ("thing <= 1.0",   "thing <= 1.0",    True),
 
+              -- test versions without releases
               ("thing <= 1.0",   "thing = 1.0-9",   True),
               ("thing <= 1.0",   "thing < 1.0-9",   True),
               ("thing <= 1.0",   "thing <= 1.0-9",  True),
@@ -187,6 +188,19 @@ spec = do
               ("thing >= 1.0",   "thing <= 1.0-9",  True),
               ("thing >= 1.0",   "thing >= 1.0-9",  True),
               ("thing >= 1.0",   "thing > 1.0-9",   True),
+
+              -- test versions without releases by swapping the order
+              ("thing <= 1.0-8",   "thing = 1.0",   True),
+              ("thing <= 1.0-8",   "thing < 1.0",   True),
+              ("thing <= 1.0-8",   "thing <= 1.0",  True),
+              ("thing <= 1.0-8",   "thing >= 1.0",  True),
+              ("thing <= 1.0-8",   "thing > 1.0",   True),
+
+              ("thing >= 1.0-8",   "thing = 1.0",   True),
+              ("thing >= 1.0-8",   "thing < 1.0",   False),
+              ("thing >= 1.0-8",   "thing <= 1.0",  True),
+              ("thing >= 1.0-8",   "thing >= 1.0",  True),
+              ("thing >= 1.0-8",   "thing > 1.0",   True),
 
               ("thing = 1.0-9",  "thing = 1.0-9",   True),
               ("thing < 1.0-9",  "thing = 1.0-9",   False),
