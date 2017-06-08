@@ -116,8 +116,8 @@ spec = describe "RPM.Tags.mkTag" $ do
             5068, 5070, 5072, 5078, 5080, 5082, 5084, 5085,
             5091] $ \tagInt -> do
       it ("returns Nothing for `tag' == " ++ show tagInt ++ " and `ty' != 4") $ do
-        let store = BS.pack [0]
-        let tag = mkTag store tagInt 99 0 0
+        let store = BS.pack [0, 0, 0, 5]
+        let tag = mkTag store tagInt 99 0 1
         tag `shouldBe` Nothing
 
       it ("returns correct value for `tag' == " ++ show tagInt) $ do
@@ -691,3 +691,17 @@ spec = describe "RPM.Tags.mkTag" $ do
             tag == Just (Description store) || -- 1005
             tag == Just (Group store) -- 1016
             `shouldBe` True
+
+    it "mkTag returns Nothing when store is empty" $ do
+      mkTag (BC.pack "") 1029 1 0 1 `shouldBe` Nothing -- mkChar
+      mkTag (BC.pack []) 1030 3 0 1 `shouldBe` Nothing -- mkWord16
+      mkTag (BS.pack []) 1003 4 0 1 `shouldBe` Nothing -- mkWord32
+      mkTag (BS.pack [])  270 5 0 1 `shouldBe` Nothing -- mkWord64
+      mkTag (BS.pack [])  259 7 0 1 `shouldBe` Nothing -- mkBinary
+      mkTag (BC.pack "")  100 8 0 1 `shouldBe` Nothing -- mkStringArray
+      mkTag (BC.pack "") 1000 6 0 7 `shouldBe` Nothing -- mkString
+      mkTag (BC.pack "") 1004 9 0 7 `shouldBe` Nothing -- mkI18NString
+
+    it "mkTag -> mkNull returns valid data even when store is empty" $
+      -- because mkNull doesn't read from the store
+      mkTag (BS.pack []) 61 0 0 1 `shouldBe` Just (HeaderImage Null)

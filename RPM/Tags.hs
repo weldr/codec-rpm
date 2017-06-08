@@ -682,52 +682,60 @@ mkNull _ ty _ _ | ty == 0    = Just Null
                 | otherwise  = Nothing
 
 mkChar :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Char]
-mkChar store ty offset count | ty == 1   = Just $ C.unpack $ BS.take count' start
+mkChar store ty offset count | fromIntegral (BS.length store) - offset < count = Nothing
+                             | ty == 1   = Just $ C.unpack $ BS.take count' start
                              | otherwise = Nothing
  where
     count' = fromIntegral count
     start = BS.drop (fromIntegral offset) store
 
 mkWord16 :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word16]
-mkWord16 store ty offset count | ty == 3     = Just $ readWords store 2 asWord16 offsets
+mkWord16 store ty offset count | fromIntegral (BS.length store) - offset < (2*count) = Nothing
+                               | ty == 3     = Just $ readWords store 2 asWord16 offsets
                                | otherwise   = Nothing
  where
     offsets = map (\n -> offset + (n*2)) [0 .. count-1]
 
 mkWord32 :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word32]
-mkWord32 store ty offset count | ty == 4     = Just $ readWords store 4 asWord32 offsets
+mkWord32 store ty offset count | fromIntegral (BS.length store) - offset < (4*count) = Nothing
+                               | ty == 4     = Just $ readWords store 4 asWord32 offsets
                                | otherwise   = Nothing
  where
     offsets = map (\n -> offset + (n*4)) [0 .. count-1]
 
 mkWord64 :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [Word64]
-mkWord64 store ty offset count | ty == 5     = Just $ readWords store 8 asWord64 offsets
+mkWord64 store ty offset count | fromIntegral (BS.length store) - offset < (8*count) = Nothing
+                               | ty == 5     = Just $ readWords store 8 asWord64 offsets
                                | otherwise   = Nothing
  where
     offsets = map (\n -> offset + (n*8)) [0 .. count-1]
 
 mkString :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe String
-mkString store ty offset _ | ty == 6   = Just $ C.unpack $ BS.takeWhile (/= 0) start
-                           | otherwise = Nothing
+mkString store ty offset count | fromIntegral (BS.length store) - offset < count = Nothing
+                               | ty == 6   = Just $ C.unpack $ BS.takeWhile (/= 0) start
+                               | otherwise = Nothing
  where
     start = BS.drop (fromIntegral offset) store
 
 mkBinary :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe BS.ByteString
-mkBinary store ty offset count | ty == 7     = Just $ BS.take count' start
+mkBinary store ty offset count | fromIntegral (BS.length store) - offset < count = Nothing
+                               | ty == 7     = Just $ BS.take count' start
                                | otherwise   = Nothing
  where
     count' = fromIntegral count
     start  = BS.drop (fromIntegral offset) store
 
 mkStringArray :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe [String]
-mkStringArray store ty offset count | ty == 8    = Just $ map C.unpack $ readStrings start count
+mkStringArray store ty offset count | fromIntegral (BS.length store) - offset < count = Nothing
+                                    | ty == 8    = Just $ map C.unpack $ readStrings start count
                                     | otherwise  = Nothing
  where
     start = BS.drop (fromIntegral offset) store
 
 mkI18NString :: BS.ByteString -> Word32 -> Word32 -> Word32 -> Maybe BS.ByteString
-mkI18NString store ty offset _ | ty == 9     = Just $ BS.takeWhile (/= 0) start
-                               | otherwise   = Nothing
+mkI18NString store ty offset count | fromIntegral (BS.length store) - offset < count = Nothing
+                                   | ty == 9     = Just $ BS.takeWhile (/= 0) start
+                                   | otherwise   = Nothing
  where
     start  = BS.drop (fromIntegral offset) store
 
