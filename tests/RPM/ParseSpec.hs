@@ -3,8 +3,11 @@ module RPM.ParseSpec (spec) where
 import Test.Hspec
 import Test.Hspec.Attoparsec
 import qualified Data.ByteString as BS
+import qualified Data.ByteString.Char8 as BC
+
 
 import RPM.Parse
+import RPM.Tags
 import RPM.Types(Lead(..), SectionHeader(..))
 
 
@@ -125,3 +128,18 @@ spec = describe "RPM.Parse" $ do
       stream ~?> parseSectionHeader `leavesUnconsumed` BS.pack []
       -- result is as expected
       stream ~> parseSectionHeader `parseSatisfies` (==expected)
+
+  describe "parseOneTag" $ do
+    it "returns Nothing when any of the input streams is empty" $ do
+      parseOneTag (BS.pack []) (BS.pack [])              `shouldBe` Nothing
+      parseOneTag (BS.pack [1, 2, 3, 4, 5]) (BS.pack []) `shouldBe` Nothing
+      parseOneTag (BS.pack []) (BS.pack [100, 8, 0, 7])  `shouldBe` Nothing
+
+    it "returns valid Tag when both input streams are valid" $ do
+      let store = BC.pack "123-test-me"
+      let bs = BS.pack [0, 0, 0, 100, -- tag
+                        0, 0, 0, 8, -- ty
+                        0, 0, 0, 4, -- offset
+                        0, 0, 0, 7 -- count
+                       ]
+      parseOneTag store bs `shouldBe` Just (HeaderI18NTable ["test-me"])
