@@ -21,6 +21,7 @@ module RPM.Parse(
 #ifdef TEST
                  parseLead,
                  parseSectionHeader,
+                 parseOneTag,
 #endif
                  parseRPM,
                  parseRPMC)
@@ -86,7 +87,8 @@ parseSectionHeader = do
                            sectionSize }
 
 parseOneTag :: C.ByteString -> C.ByteString -> Maybe Tag
-parseOneTag store bs = let
+parseOneTag store bs | BS.length bs < 16 = Nothing
+                     | otherwise = let
     tag = fromIntegral . asWord32 $ BS.take 4 bs
     ty  = fromIntegral . asWord32 $ BS.take 4 (BS.drop 4 bs)
     off = fromIntegral . asWord32 $ BS.take 4 (BS.drop 8 bs)
