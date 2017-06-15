@@ -22,6 +22,7 @@ module RPM.Parse(
                  parseLead,
                  parseSectionHeader,
                  parseOneTag,
+                 parseSection,
 #endif
                  parseRPM,
                  parseRPMC)
@@ -106,6 +107,7 @@ parseSection = do
     headerStore <- take (fromIntegral $ sectionSize headerSectionHeader)
 
     -- Now that we've got the store, process each tag by looking up its values in the store.
+    -- NOTE: mapMaybe will reject tags which are Nothing
     let headerTags = mapMaybe (parseOneTag headerStore) rawTags
 
     return Header { headerSectionHeader,
