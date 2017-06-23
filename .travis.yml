@@ -6,7 +6,7 @@ before_install:
   - wget https://haskell.org/platform/download/8.0.2/haskell-platform-8.0.2-unknown-posix--minimal-x86_64.tar.gz
   - tar -xzvf ./haskell-platform-8.0.2-unknown-posix--minimal-x86_64.tar.gz
   - sudo ./install-haskell-platform.sh
-  - cabal update && cabal install hlint hpc-coveralls
+  - cabal update && cabal install hlint
 
 script:
   - ~/.cabal/bin/hlint .
@@ -15,7 +15,8 @@ script:
   - cabal build
   - cabal test --show-details=always
 
-after_script:
+after_success:
+  - cabal install hpc-coveralls
   - ~/.cabal/bin/hpc-coveralls --display-report tests
 
 notifications:
