@@ -1,28 +1,27 @@
--- Copyright (C) 2017 Red Hat, Inc.
---
--- This library is free software; you can redistribute it and/or
--- modify it under the terms of the GNU Lesser General Public
--- License as published by the Free Software Foundation; either
--- version 2.1 of the License, or (at your option) any later version.
---
--- This library is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
--- Lesser General Public License for more details.
---
--- You should have received a copy of the GNU Lesser General Public
--- License along with this library; if not, see <http://www.gnu.org/licenses/>.
-
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Codec.RPM.Version(DepOrdering(..),
-                         DepRequirement(..),
-                         EVR(..),
-                        parseEVR,
-                        parseDepRequirement,
-                        satisfies,
-                        vercmp)
+-- |
+-- Module: Codec.RPM.Parse
+-- Copyright: (c) 2017 Red Hat, Inc.
+-- License: LGPL
+--
+-- Maintainer: https://github.com/weldr
+-- Stability: stable
+-- Portability: portable
+-- 
+-- Functions and types for working with version numbers, as understood by RPM.
+
+module Codec.RPM.Version(
+    -- * Types
+    DepOrdering(..),
+    DepRequirement(..),
+    EVR(..),
+    -- * Functions
+    parseEVR,
+    parseDepRequirement,
+    satisfies,
+    vercmp)
  where
 
 import           Data.Char(digitToInt, isAsciiLower, isAsciiUpper, isDigit, isSpace)
@@ -35,10 +34,17 @@ import           Text.Parsec
 
 import Prelude hiding(EQ, GT, LT)
 
--- optional epoch, version, release
+-- | The versioning information portion of a package's name - epoch, version, release.
 data EVR = EVR {
+    -- | The epoch of a package.  This is sort of a super version number, used when a package with
+    -- an earlier version number must upgrade a package with a later version number.  The package
+    -- with a larger epoch will always in version comparisons.  Most packages do not have an epoch.
     epoch :: Maybe Word32,
+    -- | The version number provided by the package's upstream, represented as 'Text'.
     version :: T.Text,
+    -- | The release number, represented as 'Text'.  The release value is added on by a distribution
+    -- and allows them to make multiple releases of the same upstream version, fixing bugs and applying
+    -- distribution-specific tweaks.
     release :: T.Text }
  deriving(Show)
 
@@ -53,13 +59,37 @@ instance Ord EVR where
                         version evr1 `vercmp` version evr2 <>
                         release evr1 `vercmp` release evr2
 
--- Like Ordering, but with >= and <=
+-- | Like 'Ordering', but with support for less-than-or-equal and greater-than-or-equal.
 data DepOrdering = LT | LTE | EQ | GTE | GT
  deriving(Eq, Show)
 
+-- | RPM supports the concept of dependencies between packages.  Collectively, these dependencies
+-- are commonly referred to as PRCO - Provides, Requires, Conflicts, and Obsoletes.  These
+-- dependencies can optionally include version information.  These relationships can be examined
+-- with various RPM inspection tools or can be found in the spec files that define how a package
+-- is built.  Examples include:
+--
+-- @
+-- Requires: python-six
+-- Requires: python3-blivet >= 1:1.0
+-- Obsoletes: booty <= 0.107-1
+-- @
+--
+-- This data type expresses a single dependency relationship.  The example dependencies above
+-- would be represented like so:
+--
+-- @
+-- DepRequirement "python-six" Nothing
+-- DepRequirement "python3-blivet" (Just (GTE, EVR (Just 1) "1.0" ""))
+-- DepRequirement "booty" (Just (LTE, EVR Nothing "0.107" "1"))
+-- @
+--
+-- It is not in the scope of this type to know what kind of relationship a 'DepRequirement'
+-- describes.
 data DepRequirement = DepRequirement T.Text (Maybe (DepOrdering, EVR))
  deriving (Eq, Show)
 
+-- | Compare two version numbers and return an 'Ordering'.
 vercmp :: T.Text -> T.Text -> Ordering
 vercmp a b = let
     -- strip out all non-version characters
@@ -112,7 +142,11 @@ vercmp a b = let
     dropSeparators = T.dropWhile (not . isVersionChar)
 
 {-# ANN satisfies ("HLint: ignore Redundant if" :: String) #-}
-satisfies :: DepRequirement -> DepRequirement -> Bool
+-- | Determine if a candidate package satisfies the dependency relationship required by some other
+-- package.
+satisfies :: DepRequirement         -- ^ The package in question, represented as a 'DepRequirement'.
+          -> DepRequirement         -- ^ The requirement.
+          -> Bool
 satisfies (DepRequirement name1 ver1) (DepRequirement name2 ver2) =
     -- names have to match
     if name1 /= name2 then False
@@ -190,9 +224,12 @@ parseEVRParsec = do
 
     versionChar = digit <|> upper <|> lower <|> oneOf "._+%{}~"
 
+-- | Convert a 'Text' representation into an 'EVR' or a 'ParseError' if something goes wrong.
 parseEVR :: T.Text -> Either ParseError EVR
 parseEVR = parse parseEVRParsec ""
 
+-- | Convert a 'Text' representation into a 'DepRequirement' or a 'ParseError' if something
+-- goes wrong.
 parseDepRequirement :: T.Text -> Either ParseError DepRequirement
 parseDepRequirement input = parse parseDepRequirement' "" input
  where

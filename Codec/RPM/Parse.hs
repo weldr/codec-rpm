@@ -1,21 +1,17 @@
--- Copyright (C) 2016-2017 Red Hat, Inc.
---
--- This library is free software; you can redistribute it and/or
--- modify it under the terms of the GNU Lesser General Public
--- License as published by the Free Software Foundation; either
--- version 2.1 of the License, or (at your option) any later version.
---
--- This library is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
--- Lesser General Public License for more details.
---
--- You should have received a copy of the GNU Lesser General Public
--- License along with this library; if not, see <http://www.gnu.org/licenses/>.
-
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE FlexibleContexts #-}
+
+-- |
+-- Module: Codec.RPM.Parse
+-- Copyright: (c) 2016-2017 Red Hat, Inc.
+-- License: LGPL
+--
+-- Maintainer: https://github.com/weldr
+-- Stability: stable
+-- Portability: portable
+--
+-- A module for creating 'RPM' records from various data sources.
 
 module Codec.RPM.Parse(
 #ifdef TEST
@@ -114,6 +110,19 @@ parseSection = do
                     headerTags,
                     headerStore }
 
+-- | A parser (in the attoparsec sense of the term) that constructs 'RPM' records.  The parser
+-- can be run against a 'ByteString' of RPM data using any of the usual functions.  'parse' and
+-- 'parseOnly' are especially useful:
+--
+-- > import Data.Attoparsec.ByteString(parse)
+-- > import qualified Data.ByteString as BS
+-- > s <- BS.readFile "some.rpm"
+-- > result <- parse parseRPM s
+--
+-- The 'Result' can then be examined directly or converted using 'maybeResult' (for converting
+-- it into a 'Maybe RPM') or 'eitherResult' (for converting it into an 'Either String RPM').
+-- In the latter case, the String contains any parse error that occurred when reading the
+-- RPM data.
 parseRPM :: Parser RPM
 parseRPM = do
     -- First comes the (mostly useless) lead.
@@ -135,7 +144,22 @@ parseRPM = do
      in
         if remainder > 0 then fromIntegral $ 8 - remainder else 0
 
--- Like parseRPM, but puts the resulting RPM into a Conduit.
+-- | Like 'parseRPM', but puts the result into a 'Conduit' as an 'Either', containing either a
+-- 'ParseError' or an 'RPM'.  The result can be extracted with 'runExceptT', like so:
+--
+-- > import Conduit((.|), runConduitRes, sourceFile)
+-- > import Control.Monad.Except(runExceptT)
+-- > result <- runExceptT $ runConduitRes $ sourceFile "some.rpm" .| parseRPMC .| someConsumer
+--
+-- On success, the 'RPM' record will be passed down the conduit for futher processing or
+-- consumption.  Functions can be written to extract just one element out of the 'RPM' and
+-- pass it along.  For instance:
+--
+-- > payloadC :: MonadError e m => Conduit RPM m BS.ByteStrin
+-- > payloadC = awaitForever (yield . rpmArchive)
+--
+-- On error, the rest of the conduit will be skipped and the 'ParseError' will be returned
+-- as the result to be dealt with.
 parseRPMC :: MonadError String m => Conduit C.ByteString m RPM
 parseRPMC =
     conduitParserEither parseRPM .| consumer
