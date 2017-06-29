@@ -1,32 +1,31 @@
--- Copyright (C) 2016-2017 Red Hat, Inc.
---
--- This library is free software; you can redistribute it and/or
--- modify it under the terms of the GNU Lesser General Public
--- License as published by the Free Software Foundation; either
--- version 2.1 of the License, or (at your option) any later version.
---
--- This library is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
--- Lesser General Public License for more details.
---
--- You should have received a copy of the GNU Lesser General Public
--- License along with this library; if not, see <http://www.gnu.org/licenses/>.
-
 {-# LANGUAGE DeriveDataTypeable #-}
 
-module Codec.RPM.Tags(Tag(..),
-                      Null(..),
-                      findByteStringTag,
-                      findTag,
-                      findStringTag,
-                      findStringListTag,
-                      findWord16Tag,
-                      findWord16ListTag,
-                      findWord32Tag,
-                      findWord32ListTag,
-                      mkTag,
-                      tagValue)
+-- |
+-- Module: Codec.RPM.Tags
+-- Copyright: (c) 2016-2017 Red Hat, Inc.
+-- License: LGPL
+--
+-- Maintainer: https://github.com/weldr
+-- Stability: stable
+-- Portability: portable
+
+module Codec.RPM.Tags(
+    -- * Types
+    Tag(..),
+    Null(..),
+    -- * Tag finding functions
+    findTag,
+    findByteStringTag,
+    findStringTag,
+    findStringListTag,
+    findWord16Tag,
+    findWord16ListTag,
+    findWord32Tag,
+    findWord32ListTag,
+    -- * Tag making functions
+    mkTag,
+    -- * Tag inspection functions
+    tagValue)
  where
 
 import           Data.Bits((.&.), shiftR)
@@ -48,6 +47,21 @@ import Codec.RPM.Internal.Numbers
 -- to use String instead
 {-# ANN module "HLint: ignore Use String" #-}
 
+-- | A very large data type that holds all the possibilities for the various tags that can
+-- be contained in an 'RPM' 'Header'.  Each tag describes one piece of metadata.  Most tags
+-- include some typed value, such as a 'String' or 'Word32'.  Many tags contain lists of
+-- these values, for instance any tag involving files or changelog entries.  Some tags
+-- contain no useful value at all.
+--
+-- Because there are so many possibilities for tags and each 'RPM' likely contains dozens
+-- of tags, it is unwieldy to write functions that pattern match on tags and take some
+-- action.  This module therefore provides a variety of find*Tag functions for searching
+-- the list of tags by name and returning a 'Maybe' value.  The name provided to each should
+-- be the constructor you are looking for in this data type.
+--
+-- To find the list of all files in the RPM, you would therefore do:
+--
+-- > findStringTag "FileNames" tags
 data Tag = DEPRECATED                   Tag
          | INTERNAL                     Tag
          | OBSOLETE                     Tag
@@ -364,10 +378,26 @@ instance Pretty Tag where
     -- single Tag into account.
     pPrint = text . show
 
+-- | Some 'Tag's do not contain any value, likely because support for that tag has been
+-- removed.  RPM never removes a tag from its list of known values, however, so we must
+-- still recognize them.  These tags have a special value of 'Null', which contains no
+-- value.
 data Null = Null
  deriving(Eq, Show, Data, Typeable)
 
-mkTag :: BS.ByteString -> Int -> Word32 -> Word32 -> Word32 -> Maybe Tag
+-- | Attempt to create a 'Tag' based on various parameters.
+mkTag :: BS.ByteString      -- ^ The 'headerStore' containing the value of the potential 'Tag'.
+      -> Int                -- ^ The number of the 'Tag', as read out of the store.  Valid numbers
+                            --   may be found in lib/rpmtag.h in the RPM source, though most
+                            --   users will not need to know this since it will be read from the
+                            --   store.
+      -> Word32             -- ^ What is the type of this tag's value?  Valid numbers may be found
+                            --   in the rpmTagType_e enum in lib/rpmtag.h in the RPM source, though
+                            --   most users will not need to know this since it will be read from
+                            --   the store.  Here, it is used as a simple form of type checking.
+      -> Word32             -- ^ How far into the 'headerStore' is this 'Tag's value stored?
+      -> Word32             -- ^ How many values are stored for this 'Tag'?
+      -> Maybe Tag
 mkTag store tag ty offset count = case tag of
     61      -> maker mkNull          >>=                 Just . HeaderImage
     62      -> maker mkNull          >>=                 Just . HeaderSignatures
@@ -749,45 +779,74 @@ readWords bs size conv offsets = map (\offset -> conv $ BS.take size $ BS.drop (
 readStrings :: BS.ByteString -> Word32 -> [BS.ByteString]
 readStrings bytestring count  = take (fromIntegral count) $ BS.split 0 bytestring
 
--- | Given a 'Tag' name and a list of 'Tag's, find the match and return it as a Maybe.
+-- | Given the name of a 'Tag' and a list of 'Tag's (say, from the 'Header' of some 'RPM'),
+-- find the match and return it as a 'Maybe'.  This is the most generic of the various finding
+-- functions - it will return any match regardless of its type.  You are expected to know what
+-- type you are looking for.
 findTag :: String -> [Tag] -> Maybe Tag
 findTag name = find (\t -> name == showConstr (toConstr t))
 
--- | Given a 'Tag' name and a list of 'Tag's, find the match, convert it into a
--- 'ByteString', and return it as a Maybe.
+-- | Given the name of a 'Tag' and a list of 'Tag's, find the match, convert it into a
+-- 'ByteString', and return it as a 'Maybe'.  If the value of the 'Tag' cannot be converted
+-- into a 'ByteString' (say, because it is of the wrong type), 'Nothing' will be returned.
+-- Thus, this should only be used on tags whose value is known - see the definition of 'Tag'
+-- for the possibilities.
 findByteStringTag :: String -> [Tag] -> Maybe BS.ByteString
 findByteStringTag name tags = findTag name tags >>= \t -> tagValue t :: Maybe BS.ByteString
 
--- | Given a 'Tag' name and a list of 'Tag's, find the match, convert it into a
--- String, and return it as a Maybe.
+-- | Given the name of a 'Tag' and a list of 'Tag's, find the match, convert it into a
+-- 'String', and return it as a 'Maybe'.  If the value of the 'Tag' cannot be converted
+-- into a 'String' (say, because it is of the wrong type), 'Nothing' will be returned.
+-- Thus, this should only be used on tags whose value is known - see the definition of
+-- 'Tag' for the possibilities.
 findStringTag :: String -> [Tag] -> Maybe String
 findStringTag name tags = findTag name tags >>= \t -> tagValue t :: Maybe String
 
--- | Given a 'Tag' name and a list of 'Tag's, find all matches, convert them into
--- Strings, and return as a list.  If no results are found, return an empty list.
+-- | Given the name of a 'Tag' and a list of 'Tag's, find all matches, convert them into
+-- 'String's, and return a list.  If no results are found or the value of a single 'Tag'
+-- cannot be converted into a 'String' (say, because it is of the wrong type), an empty
+-- list will be returned.  Thus, this should only be used on tags whose value is known -
+-- see the definition of 'Tag' for the possibilities.
 findStringListTag :: String -> [Tag] -> [String]
 findStringListTag name tags = fromMaybe [] $ findTag name tags >>= \t -> tagValue t :: Maybe [String]
 
--- | Given a 'Tag' name and a list of 'Tag's, find the match convert it into a
--- Word16, and return it as a Maybe.
+-- | Given the name of a 'Tag' and a list of 'Tag's, find the match, convert it into a
+-- 'Word16', and return it as a 'Maybe'.  If the value of the 'Tag' cannot be converted
+-- into a 'Word16' (say, because it is of the wrong type), 'Nothing' will be returned.
+-- Thus, this should only be used on tags whose value is known - see the definition of 'Tag'
+-- for the possibilities.
 findWord16Tag :: String -> [Tag] -> Maybe Word16
 findWord16Tag name tags = findTag name tags >>= \t -> tagValue t :: Maybe Word16
 
--- | Given a 'Tag' name and a list of 'Tag's, find all matches, convert them into
--- Word16, and return as a list.  if no results are found, return an empty list.
+-- | Given the name of a 'Tag' and a list of 'Tag's, find all matches, convert them into
+-- 'Word16's, and return a list.  If no results are found or the value of a single 'Tag'
+-- cannot be converted into a 'Word16' (say, because it is of the wrong type), an empty
+-- list will be returned.  Thus, this should only be used on tags whose value is known -
+-- see the definition of 'Tag' for the possibilities.
 findWord16ListTag :: String -> [Tag] -> [Word16]
 findWord16ListTag name tags = fromMaybe [] $ findTag name tags >>= \t -> tagValue t :: Maybe [Word16]
 
--- | Given a 'Tag' name and a list of 'Tag's, find the match convert it into a
--- Word32, and return it as a Maybe.
+-- | Given the name of a 'Tag' and a list of 'Tag's, find the match, convert it into a
+-- 'Word16', and return it as a 'Maybe'.  If the value of the 'Tag' cannot be converted
+-- into a 'Word16' (say, because it is of the wrong type), 'Nothing' will be returned.
+-- Thus, this should only be used on tags whose value is known - see the definition of 'Tag'
+-- for the possibilities.
 findWord32Tag :: String -> [Tag] -> Maybe Word32
 findWord32Tag name tags = findTag name tags >>= \t -> tagValue t :: Maybe Word32
 
--- | Given a 'Tag' name and a list of 'Tag's, find all matches, convert them into
--- Word32, and return as a list.  if no results are found, return an empty list.
+-- | Given the name of a 'Tag' and a list of 'Tag's, find all matches, convert them into
+-- 'Word32's, and return a list.  If no results are found or the value of a single 'Tag'
+-- cannot be converted into a 'Word32' (say, because it is of the wrong type), an empty
+-- list will be returned.  Thus, this should only be used on tags whose value is known -
+-- see the definition of 'Tag' for the possibilities.
 findWord32ListTag :: String -> [Tag] -> [Word32]
 findWord32ListTag name tags = fromMaybe [] $ findTag name tags >>= \t -> tagValue t :: Maybe [Word32]
 
--- | Given a 'Tag', return its type.
+-- | Given a 'Tag', return its value.  This is a helper function to be used with 'findTag',
+-- essentially as a type-safe way to cast the value into a known type.  It is used internally
+-- in all the type-specific find*Tag functions but can also be used on its own.  A function
+-- to find the "Epoch" tag could be written as follows:
+--
+-- > epoch = findTag "Epoch" tags >>= \t -> tagValue t :: Maybe Word32
 tagValue :: Typeable a => Tag -> Maybe a
 tagValue = gmapQi 0 cast
