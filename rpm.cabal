@@ -1,11 +1,15 @@
-name:                rpm
-version:             1
-author:              Chris Lumens
-maintainer:          clumens@redhat.com
-build-type:          Simple
-cabal-version:       >=1.10
-license:             LGPL
-license-file:        LICENSE
+name:               rpm
+version:            1
+author:             Chris Lumens
+maintainer:         clumens@redhat.com
+build-type:         Simple
+cabal-version:      >=1.10
+license:            LGPL
+license-file:       LICENSE
+
+extra-doc-files:    examples/inspect.hs,
+                    examples/rpm2json.hs,
+                    examples/unrpm.hs
 
 library
     exposed-modules:    Codec.RPM.Parse,
@@ -27,72 +31,6 @@ library
                         pretty >= 1.1.2.0,
                         resourcet,
                         text
-
-    default-language:   Haskell2010
-
-    ghc-options:        -Wall -Werror
-
-executable inspect
-    main-is:            inspect.hs
-
-    build-depends:      rpm,
-                        attoparsec >= 0.12.1.4,
-                        attoparsec-binary,
-                        base >= 4.7 && < 5.0,
-                        bytestring >= 0.10 && < 0.11,
-                        conduit >= 1.2.8,
-                        conduit-combinators,
-                        conduit-extra,
-                        mtl >= 2.2.1,
-                        pretty >= 1.1.2.0,
-                        resourcet,
-                        transformers
-
-    default-language:   Haskell2010
-
-    ghc-options:        -Wall -Werror
-
-executable unrpm
-    main-is:            unrpm.hs
-
-    build-depends:      rpm,
-                        attoparsec >= 0.12.1.4,
-                        attoparsec-binary,
-                        base >= 4.7 && < 5.0,
-                        bytestring >= 0.10 && < 0.11,
-                        conduit >= 1.2.8,
-                        conduit-combinators,
-                        conduit-extra,
-                        cpio-conduit,
-                        directory,
-                        filepath,
-                        lzma-conduit,
-                        mtl >= 2.2.1,
-                        pretty >= 1.1.2.0,
-                        resourcet,
-                        transformers
-
-    default-language:   Haskell2010
-
-    ghc-options:        -Wall -Werror
-
-executable rpm2json
-    main-is:            rpm2json.hs
-    
-    build-depends:      rpm,
-                        attoparsec >= 0.12.1.4,
-                        attoparsec-binary,
-                        base >= 4.7 && < 5.0,
-                        aeson < 1.0,
-                        aeson-pretty,
-                        bytestring >= 0.10 && < 0.11,
-                        conduit >= 1.2.8,
-                        conduit-combinators,
-                        conduit-extra,
-                        mtl >= 2.2.1,
-                        pretty >= 1.1.2.0,
-                        resourcet,
-                        transformers
 
     default-language:   Haskell2010
 
