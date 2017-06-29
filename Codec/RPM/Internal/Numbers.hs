@@ -13,9 +13,9 @@
 -- You should have received a copy of the GNU Lesser General Public
 -- License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
-module RPM.Internal.Numbers(asWord16,
-                            asWord32,
-                            asWord64)
+module Codec.RPM.Internal.Numbers(asWord16,
+                                  asWord32,
+                                  asWord64)
  where
 
 import           Data.Bits((.|.), shift)

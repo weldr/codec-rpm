@@ -30,8 +30,8 @@ import           System.Environment(getArgs)
 import           System.Exit(exitFailure)
 import           System.FilePath((</>), splitFileName)
 
-import RPM.Parse(parseRPMC)
-import RPM.Types(RPM(..))
+import Codec.RPM.Parse(parseRPMC)
+import Codec.RPM.Types(RPM(..))
 
 -- Grab an RPM from stdin and convert it into a chunked conduit of ByteStrings.  This could
 -- just as easily come from a stdin (using stdinC) or over the network (see httpSink in

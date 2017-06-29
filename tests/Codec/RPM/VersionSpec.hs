@@ -1,16 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module RPM.VersionSpec (spec) where
+module Codec.RPM.VersionSpec (spec) where
 
 import           Test.Hspec
 import           Data.Foldable(forM_)
 import qualified Data.Text as T
-import           RPM.Version(DepRequirement(..), EVR(..), parseDepRequirement, parseEVR, satisfies, vercmp)
-import qualified RPM.Version as RPM(DepOrdering(..))
+import           Codec.RPM.Version(DepRequirement(..), EVR(..), parseDepRequirement, parseEVR, satisfies, vercmp)
+import qualified Codec.RPM.Version as RPM(DepOrdering(..))
 
 spec :: Spec
 spec = do
-    describe "RPM.Version.vercmp" $ do
+    describe "Codec.RPM.Version.vercmp" $ do
         let vercmpCases = [
                          ("1.0", "1.0", EQ),
                          ("1.0", "2.0", LT),
@@ -104,7 +104,7 @@ spec = do
           it (T.unpack verA ++ " " ++ show ord ++ " " ++ T.unpack verB) $
             vercmp verA verB `shouldBe` ord
 
-    describe "RPM.Version.EVR Ord" $ do
+    describe "Codec.RPM.Version.EVR Ord" $ do
         let ordCases = [
                      (EVR{epoch=Nothing, version="1.0", release="1"}, EVR{epoch=Nothing, version="1.0", release="1"}, EQ),
                      (EVR{epoch=Just 0,  version="1.0", release="1"}, EVR{epoch=Nothing, version="1.0", release="1"}, EQ),
@@ -126,7 +126,7 @@ spec = do
             it (show verA ++ " " ++ show ord ++ " " ++ show verB) $
                 compare verA verB `shouldBe` ord
 
-    describe "RPM.Version.satisfies" $ do
+    describe "Codec.RPM.Version.satisfies" $ do
         let satisfiesCases = [
               ("no", "match", False),
 
@@ -299,7 +299,7 @@ spec = do
                     (Right verA, Right verB) -> satisfies verA verB `shouldBe` b
                     _                        -> expectationFailure "Unable to parse versions"
 
-    describe "RPM.Version.parseEVR" $ do
+    describe "Codec.RPM.Version.parseEVR" $ do
         let parseEVRCases = [
                 ("1.0-11.fc100",    Right EVR{epoch=Nothing, version="1.0", release="11.fc100"}),
                 ("0:1.0-11.fc100",  Right EVR{epoch=Just 0,  version="1.0", release="11.fc100"}),
@@ -346,7 +346,7 @@ spec = do
                 (Right _, Left err)      -> expectationFailure $ "unable to parse valid EVR: " ++ show err
                 _                        -> return ()
 
-    describe "RPM.Version.parseDepRequirement" $ do
+    describe "Codec.RPM.Version.parseDepRequirement" $ do
         let parseDepRequirementCases = [
                 ("libthing",        DepRequirement "libthing" Nothing),
                 ("libthing >= 1.0", DepRequirement "libthing" $ Just (RPM.GTE, EVR{epoch=Nothing, version="1.0", release=""})),

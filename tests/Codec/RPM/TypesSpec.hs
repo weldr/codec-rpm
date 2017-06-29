@@ -1,10 +1,10 @@
-module RPM.TypesSpec (spec) where
+module Codec.RPM.TypesSpec (spec) where
 
 import Test.Hspec
-import RPM.Types(SectionHeader(..))
+import Codec.RPM.Types(SectionHeader(..))
 
 spec :: Spec
-spec = describe "RPM.Types" $
+spec = describe "Codec.RPM.Types" $
   describe "SectionHeader" $ do
     it "is equal to itself" $ do
       let header_1 = SectionHeader 0 1 1

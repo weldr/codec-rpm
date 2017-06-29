@@ -1,20 +1,20 @@
-module RPM.Tags_findSpec (spec) where
+module Codec.RPM.Tags_findSpec (spec) where
 
 import Test.Hspec
-import RPM.Tags(findTag,
-                findByteStringTag,
-                findStringTag,
-                findStringListTag,
-                findWord16Tag,
-                findWord16ListTag,
-                findWord32Tag,
-                findWord32ListTag,
-                Tag(..))
+import Codec.RPM.Tags(findTag,
+                      findByteStringTag,
+                      findStringTag,
+                      findStringListTag,
+                      findWord16Tag,
+                      findWord16ListTag,
+                      findWord32Tag,
+                      findWord32ListTag,
+                      Tag(..))
 import qualified Data.ByteString.Char8 as BC
 
 
 spec :: Spec
-spec = describe "RPM.Tags.find*" $ do
+spec = describe "Codec.RPM.Tags.find*" $ do
   describe "findTag" $ do
     it "returns Nothing if name is not in the list of tags" $ do
       let tag_1 = ProvideName ["anaconda"]

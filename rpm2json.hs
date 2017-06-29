@@ -27,9 +27,10 @@ import           Data.Aeson.Encode.Pretty(encodePretty)
 import qualified Data.ByteString.Lazy.Char8 as C
 import           Data.Data
 import           Data.Word
-import           RPM.Parse(parseRPMC)
-import           RPM.Tags(Tag)
-import           RPM.Types(RPM(..), Lead, SectionHeader, Header(..))
+
+import Codec.RPM.Parse(parseRPMC)
+import Codec.RPM.Tags(Tag)
+import Codec.RPM.Types(RPM(..), Lead, SectionHeader, Header(..))
 
 -- make the RPM types JSON-able from the bottom up
 -- only doing the to-JSON instead of from-JSON, to avoid headaches and

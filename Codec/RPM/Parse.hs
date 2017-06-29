@@ -17,15 +17,15 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-module RPM.Parse(
+module Codec.RPM.Parse(
 #ifdef TEST
-                 parseLead,
-                 parseSectionHeader,
-                 parseOneTag,
-                 parseSection,
+                       parseLead,
+                       parseSectionHeader,
+                       parseOneTag,
+                       parseSection,
 #endif
-                 parseRPM,
-                 parseRPMC)
+                       parseRPM,
+                       parseRPMC)
  where
 
 #if !MIN_VERSION_base(4,8,0)
@@ -42,9 +42,9 @@ import           Data.Conduit.Attoparsec(ParseError(..), conduitParserEither)
 import           Data.Maybe(mapMaybe)
 import           Prelude hiding(take)
 
-import RPM.Internal.Numbers(asWord32)
-import RPM.Tags(Tag, mkTag)
-import RPM.Types(Header(..), Lead(..), RPM(..), SectionHeader(..))
+import Codec.RPM.Internal.Numbers(asWord32)
+import Codec.RPM.Tags(Tag, mkTag)
+import Codec.RPM.Types(Header(..), Lead(..), RPM(..), SectionHeader(..))
 
 -- "a <$> b <$> c" looks better than "a . b <$> c"
 {-# ANN parseLead "HLint: ignore Functor law" #-}

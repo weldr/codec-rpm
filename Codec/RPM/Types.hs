@@ -15,10 +15,10 @@
 
 {-# LANGUAGE RecordWildCards #-}
 
-module RPM.Types(RPM(..),
-                 Lead(..),
-                 Header(..),
-                 SectionHeader(..))
+module Codec.RPM.Types(RPM(..),
+                       Lead(..),
+                       Header(..),
+                       SectionHeader(..))
 
  where
 
@@ -27,7 +27,7 @@ import           Data.Word(Word8, Word16, Word32)
 import           Text.PrettyPrint.HughesPJClass(Pretty(..))
 import           Text.PrettyPrint((<>), ($$), nest, text, vcat)
 
-import RPM.Tags
+import Codec.RPM.Tags
 
 data RPM = RPM {
     rpmLead :: Lead,

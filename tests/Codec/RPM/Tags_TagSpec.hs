@@ -1,11 +1,11 @@
-module RPM.Tags_TagSpec (spec) where
+module Codec.RPM.Tags_TagSpec (spec) where
 
 import Test.Hspec
-import RPM.Tags(Null(..),
-                Tag(..))
+import Codec.RPM.Tags(Null(..),
+                      Tag(..))
 
 spec :: Spec
-spec = describe "RPM.Tags data types" $ do
+spec = describe "Codec.RPM.Tags data types" $ do
   describe "Null" $
     it "is equal to itself" $ do
       let null_1 = Null
