@@ -15,18 +15,18 @@
 
 {-# LANGUAGE DeriveDataTypeable #-}
 
-module RPM.Tags(Tag(..),
-                Null(..),
-                findByteStringTag,
-                findTag,
-                findStringTag,
-                findStringListTag,
-                findWord16Tag,
-                findWord16ListTag,
-                findWord32Tag,
-                findWord32ListTag,
-                mkTag,
-                tagValue)
+module Codec.RPM.Tags(Tag(..),
+                      Null(..),
+                      findByteStringTag,
+                      findTag,
+                      findStringTag,
+                      findStringListTag,
+                      findWord16Tag,
+                      findWord16ListTag,
+                      findWord32Tag,
+                      findWord32ListTag,
+                      mkTag,
+                      tagValue)
  where
 
 import           Data.Bits((.&.), shiftR)
@@ -40,7 +40,7 @@ import           Data.Word
 import           Text.PrettyPrint.HughesPJClass(Pretty(..))
 import           Text.PrettyPrint(text)
 
-import RPM.Internal.Numbers
+import Codec.RPM.Internal.Numbers
 
 {-# ANN module "HLint: ignore Use camelCase" #-}
 

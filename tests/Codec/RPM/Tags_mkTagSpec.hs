@@ -1,15 +1,15 @@
-module RPM.Tags_mkTagSpec (spec) where
+module Codec.RPM.Tags_mkTagSpec (spec) where
 
 import Test.Hspec
 import Data.Foldable(forM_)
-import RPM.Tags(mkTag, Tag(..), Null(..))
+import Codec.RPM.Tags(mkTag, Tag(..), Null(..))
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
 
 {-# ANN module "HLint: ignore Reduce duplication" #-}
 
 spec :: Spec
-spec = describe "RPM.Tags.mkTag" $ do
+spec = describe "Codec.RPM.Tags.mkTag" $ do
     it "returns Nothing for unsupported `tag' value" $ do
       let store = BS.pack [0]
       let tag = mkTag store 9999 0 0 0

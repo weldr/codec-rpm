@@ -20,8 +20,8 @@ import Control.Monad.IO.Class(MonadIO, liftIO)
 import Text.PrettyPrint(render)
 import Text.PrettyPrint.HughesPJClass(Pretty(pPrint))
 
-import RPM.Parse(parseRPMC)
-import RPM.Types(RPM)
+import Codec.RPM.Parse(parseRPMC)
+import Codec.RPM.Types(RPM)
 
 consumer :: MonadIO m => Consumer RPM m ()
 consumer = awaitForever (liftIO . putStrLn . render . pPrint)

@@ -16,13 +16,13 @@
 {-# LANGUAGE MultiWayIf #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module RPM.Version(DepOrdering(..),
-                   DepRequirement(..),
-                   EVR(..),
-                   parseEVR,
-                   parseDepRequirement,
-                   satisfies,
-                   vercmp)
+module Codec.RPM.Version(DepOrdering(..),
+                         DepRequirement(..),
+                         EVR(..),
+                        parseEVR,
+                        parseDepRequirement,
+                        satisfies,
+                        vercmp)
  where
 
 import           Data.Char(digitToInt, isAsciiLower, isAsciiUpper, isDigit, isSpace)

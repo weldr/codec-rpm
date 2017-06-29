@@ -1,4 +1,4 @@
-module RPM.ParseSpec (spec) where
+module Codec.RPM.ParseSpec (spec) where
 
 import Test.Hspec
 import Test.Hspec.Attoparsec
@@ -6,12 +6,12 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
 
 
-import RPM.Parse
-import RPM.Tags
-import RPM.Types
+import Codec.RPM.Parse
+import Codec.RPM.Tags
+import Codec.RPM.Types
 
 spec :: Spec
-spec = describe "RPM.Parse" $ do
+spec = describe "Codec.RPM.Parse" $ do
   describe "parseLead" $ do
     it "fails with wrong file signature" $ do
       let stream = BS.pack [

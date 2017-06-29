@@ -8,12 +8,12 @@ license:             LGPL
 license-file:        LICENSE
 
 library
-    exposed-modules:    RPM.Parse,
-                        RPM.Tags,
-                        RPM.Types,
-                        RPM.Version
+    exposed-modules:    Codec.RPM.Parse,
+                        Codec.RPM.Tags,
+                        Codec.RPM.Types,
+                        Codec.RPM.Version
 
-    other-modules:      RPM.Internal.Numbers
+    other-modules:      Codec.RPM.Internal.Numbers
 
     build-depends:      attoparsec >= 0.12.1.4,
                         attoparsec-binary,

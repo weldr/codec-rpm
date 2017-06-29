@@ -1,4 +1,4 @@
-module RPM.Parse_parseRPMSpec (spec) where
+module Codec.RPM.Parse_parseRPMSpec (spec) where
 
 import Test.Hspec
 import Test.Hspec.Attoparsec
@@ -6,9 +6,9 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
 
 
-import RPM.Parse
-import RPM.Tags
-import RPM.Types
+import Codec.RPM.Parse
+import Codec.RPM.Tags
+import Codec.RPM.Types
 
 stream :: BS.ByteString
 stream = BS.pack [
@@ -170,7 +170,7 @@ matchExpected rpm = do
 
 
 spec :: Spec
-spec = describe "RPM.Parse.parseRPM" $ do
+spec = describe "Codec.RPM.Parse.parseRPM" $ do
     it "succeeds with valid data" $ do
       -- parsing succeeds
       parseRPM `shouldSucceedOn` stream
