@@ -29,18 +29,18 @@ library
 
     other-modules:      Codec.RPM.Internal.Numbers
 
-    build-depends:      attoparsec >= 0.12.1.4,
-                        attoparsec-binary,
+    build-depends:      attoparsec >= 0.12.1.4 && < 0.13,
+                        attoparsec-binary >= 0.2 && < 0.3,
                         base >= 4.7 && < 5.0,
                         bytestring >= 0.10 && < 0.11,
-                        conduit >= 1.2.8,
-                        conduit-combinators,
-                        conduit-extra,
-                        mtl >= 2.2.1,
-                        parsec,
+                        conduit >= 1.2.8 && < 1.3,
+                        conduit-combinators >= 1.1.0 && < 1.2,
+                        conduit-extra >= 1.1.16 && < 1.2,
+                        mtl >= 2.2.1 && < 2.3,
+                        parsec >= 3.1.11 && < 3.2,
                         pretty >= 1.1.2.0,
-                        resourcet,
-                        text
+                        resourcet >= 1.1.9 && < 1.2,
+                        text >= 1.2.2.2 && < 1.3
 
     default-language:   Haskell2010
 
@@ -51,14 +51,14 @@ test-suite tests
     hs-source-dirs:     tests
     main-is:            Spec.hs
     
-    build-depends:      HUnit,
-                        hspec,
-                        hspec-attoparsec,
+    build-depends:      HUnit >= 1.6.0.0 && < 1.7,
+                        hspec >= 2.4.4 && < 2.5,
+                        hspec-attoparsec >= 0.1.0.2 && < 0.2,
                         base >= 4.7 && < 5.0,
-                        bytestring,
-                        attoparsec,
+                        bytestring >= 0.10 && < 0.11,
+                        attoparsec >= 0.12.1.4 && < 0.13,
                         rpm,
-                        text
+                        text >= 1.2.2.2 && < 1.3
 
     default-language:   Haskell2010
 
