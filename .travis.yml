@@ -2,15 +2,6 @@ dist: trusty
 sudo: required
 language: c
 
-addons:
-  apt:
-    sources:
-    - sourceline: 'deb http://us-central1.gce.archive.ubuntu.com/ubuntu artful main universe'
-    - sourceline: 'deb http://us-central1.gce.archive.ubuntu.com/ubuntu artful-updates main universe'
-    packages:
-    # for json_verify
-    - yajl-tools
-
 before_install:
   - wget https://haskell.org/platform/download/8.0.2/haskell-platform-8.0.2-unknown-posix--minimal-x86_64.tar.gz
   - tar -xzvf ./haskell-platform-8.0.2-unknown-posix--minimal-x86_64.tar.gz
@@ -24,19 +15,9 @@ script:
   - cabal build
   - cabal test --show-details=always
 
-  # tests to produce coverage for binaries
-  - wget https://s3.amazonaws.com/atodorov/rpms/macbook/el7/x86_64/efivar-0.14-1.el7.x86_64.rpm
-  - ./tests/test_binaries.sh ./efivar-0.14-1.el7.x86_64.rpm
-
-  # move .tix files in appropriate directories
-  - mkdir ./dist/hpc/vanilla/tix/inspect/ ./dist/hpc/vanilla/tix/unrpm/ ./dist/hpc/vanilla/tix/rpm2json/
-  - mv inspect.tix ./dist/hpc/vanilla/tix/inspect/
-  - mv rpm2json.tix ./dist/hpc/vanilla/tix/rpm2json/
-  - mv unrpm.tix ./dist/hpc/vanilla/tix/unrpm/
-
 after_success:
   - cabal install hpc-coveralls
-  - ~/.cabal/bin/hpc-coveralls --display-report tests inspect rpm2json unrpm
+  - ~/.cabal/bin/hpc-coveralls --display-report tests
 
 notifications:
   email:
