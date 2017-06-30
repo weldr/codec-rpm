@@ -13,6 +13,11 @@ license-file:       LICENSE
 cabal-version:      >= 1.10
 build-type:         Simple
 
+extra-source-files: ChangeLog.md,
+                    Makefile,
+                    README.md,
+                    tests/Codec/RPM/*.hs
+
 extra-doc-files:    examples/inspect.hs,
                     examples/rpm2json.hs,
                     examples/unrpm.hs
