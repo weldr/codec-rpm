@@ -1,5 +1,5 @@
 name:               codec-rpm
-version:            0.1.0
+version:            0.1.1
 synopsis:           A library for manipulating RPM files
 description:        This module provides a library for reading RPM files and converting them
                     into useful data structures.  There is currently no way to operate in
@@ -34,7 +34,7 @@ library
 
     other-modules:      Codec.RPM.Internal.Numbers
 
-    build-depends:      attoparsec >= 0.12.1.4 && < 0.13,
+    build-depends:      attoparsec >= 0.12.1.4 && < 0.14,
                         attoparsec-binary >= 0.2 && < 0.3,
                         base >= 4.7 && < 5.0,
                         bytestring >= 0.10 && < 0.11,
