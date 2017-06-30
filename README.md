@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/weldr/haskell-rpm.svg?branch=master)](https://travis-ci.org/weldr/haskell-rpm)
-[![Coverage Status](https://coveralls.io/repos/github/weldr/haskell-rpm/badge.svg?branch=master)](https://coveralls.io/github/weldr/haskell-rpm?branch=master)
+[![Build Status](https://travis-ci.org/weldr/codec-rpm.svg?branch=master)](https://travis-ci.org/weldr/codec-rpm)
+[![Coverage Status](https://coveralls.io/repos/github/weldr/codec-rpm/badge.svg?branch=master)](https://coveralls.io/github/weldr/codec-rpm?branch=master)
 
 Haskell library for working with RPM packages.
 

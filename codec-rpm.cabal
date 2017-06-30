@@ -4,7 +4,7 @@ synopsis:           A library for manipulating RPM files
 description:        This module provides a library for reading RPM files and converting them
                     into useful data structures.  There is currently no way to operate in
                     reverse - that is, for building an RPM file out of a data structure.
-homepage:           https://github.com/weldr/haskell-rpm
+homepage:           https://github.com/weldr/codec-rpm
 category:           Distribution
 author:             Chris Lumens
 maintainer:         clumens@redhat.com
@@ -19,7 +19,7 @@ extra-doc-files:    examples/inspect.hs,
 
 source-repository   head
     type:           git
-    location:       https://github.com/weldr/haskell-rpm
+    location:       https://github.com/weldr/codec-rpm
 
 library
     exposed-modules:    Codec.RPM.Parse,
