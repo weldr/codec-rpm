@@ -40,11 +40,11 @@ data EVR = EVR {
     -- an earlier version number must upgrade a package with a later version number.  The package
     -- with a larger epoch will always in version comparisons.  Most packages do not have an epoch.
     epoch :: Maybe Word32,
-    -- | The version number provided by the package's upstream, represented as 'Text'.
+    -- | The version number provided by the package's upstream, represented as 'Data.Text.Text'.
     version :: T.Text,
-    -- | The release number, represented as 'Text'.  The release value is added on by a distribution
-    -- and allows them to make multiple releases of the same upstream version, fixing bugs and applying
-    -- distribution-specific tweaks.
+    -- | The release number, represented as 'Data.Text.Text'.  The release value is added on by a
+    -- distribution and allows them to make multiple releases of the same upstream version, fixing
+    -- bugs and applying distribution-specific tweaks.
     release :: T.Text }
  deriving(Show)
 
@@ -224,11 +224,11 @@ parseEVRParsec = do
 
     versionChar = digit <|> upper <|> lower <|> oneOf "._+%{}~"
 
--- | Convert a 'Text' representation into an 'EVR' or a 'ParseError' if something goes wrong.
+-- | Convert a 'Data.Text.Text' representation into an 'EVR' or a 'ParseError' if something goes wrong.
 parseEVR :: T.Text -> Either ParseError EVR
 parseEVR = parse parseEVRParsec ""
 
--- | Convert a 'Text' representation into a 'DepRequirement' or a 'ParseError' if something
+-- | Convert a 'Data.Text.Text' representation into a 'DepRequirement' or a 'ParseError' if something
 -- goes wrong.
 parseDepRequirement :: T.Text -> Either ParseError DepRequirement
 parseDepRequirement input = parse parseDepRequirement' "" input

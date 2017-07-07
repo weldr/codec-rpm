@@ -66,13 +66,13 @@ data Lead = Lead {
     -- may be defined in the future.
     rpmType     :: Word16,
     -- | What platform was this package built for?  x86 is 0x0001.  Many other values
-    -- are defined.  See /usr/lib/rpm/rpmrc for the possibilities.
+    -- are defined.  See \/usr\/lib\/rpm\/rpmrc for the possibilities.
     rpmArchNum  :: Word16,
     -- | The package name, as a NEVRA.  This name is constrained to 66 bytes.  Shorter
     -- names are padded with nulls.
     rpmName     :: String,
     -- | What operating system was this package built for?  Linux is 0x0001.  Many other
-    -- values are defined.  See /usr/lib/rpm/rpmrc for the possibilities.
+    -- values are defined.  See \/usr\/lib\/rpm\/rpmrc for the possibilities.
     rpmOSNum    :: Word16,
     -- | What type of signature is used in this RPM?  For now, this appears to always
     -- be set to 0x0005.

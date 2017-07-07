@@ -110,17 +110,19 @@ parseSection = do
                     headerTags,
                     headerStore }
 
--- | A parser (in the attoparsec sense of the term) that constructs 'RPM' records.  The parser
--- can be run against a 'ByteString' of RPM data using any of the usual functions.  'parse' and
--- 'parseOnly' are especially useful:
+-- | A parser (in the attoparsec sense of the term) that constructs 'Codec.RPM.Types.RPM' records.
+-- The parser can be run against a 'Data.ByteString.ByteString' of RPM data using any of the usual
+-- functions.  'Data.Attoparsec.ByteString.parse' and 'Data.Attoparsec.ByteString.parseOnly' are
+-- especially useful:
 --
 -- > import Data.Attoparsec.ByteString(parse)
 -- > import qualified Data.ByteString as BS
 -- > s <- BS.readFile "some.rpm"
 -- > result <- parse parseRPM s
 --
--- The 'Result' can then be examined directly or converted using 'maybeResult' (for converting
--- it into a 'Maybe RPM') or 'eitherResult' (for converting it into an 'Either String RPM').
+-- The 'Data.Attoparsec.ByteString.Result' can then be examined directly or converted using
+-- 'Data.Attoparsec.ByteString.maybeResult' (for converting it into a 'Maybe' 'RPM') or
+-- 'Data.Attoparsec.ByteString.eitherResult' (for converting it into an 'Either' 'String' 'RPM').
 -- In the latter case, the String contains any parse error that occurred when reading the
 -- RPM data.
 parseRPM :: Parser RPM
@@ -145,7 +147,8 @@ parseRPM = do
         if remainder > 0 then fromIntegral $ 8 - remainder else 0
 
 -- | Like 'parseRPM', but puts the result into a 'Conduit' as an 'Either', containing either a
--- 'ParseError' or an 'RPM'.  The result can be extracted with 'runExceptT', like so:
+-- 'ParseError' or an 'RPM'.  The result can be extracted with 'Control.Monad.Except.runExceptT',
+-- like so:
 --
 -- > import Conduit((.|), runConduitRes, sourceFile)
 -- > import Control.Monad.Except(runExceptT)

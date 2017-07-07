@@ -48,16 +48,16 @@ import Codec.RPM.Internal.Numbers
 {-# ANN module "HLint: ignore Use String" #-}
 
 -- | A very large data type that holds all the possibilities for the various tags that can
--- be contained in an 'RPM' 'Header'.  Each tag describes one piece of metadata.  Most tags
--- include some typed value, such as a 'String' or 'Word32'.  Many tags contain lists of
--- these values, for instance any tag involving files or changelog entries.  Some tags
--- contain no useful value at all.
+-- be contained in an 'Codec.RPM.Types.RPM' 'Codec.RPM.Types.Header'.  Each tag describes
+-- one piece of metadata.  Most tags include some typed value, such as a 'String' or
+-- 'Word32'.  Many tags contain lists of these values, for instance any tag involving files
+-- or changelog entries.  Some tags contain no useful value at all.
 --
--- Because there are so many possibilities for tags and each 'RPM' likely contains dozens
--- of tags, it is unwieldy to write functions that pattern match on tags and take some
--- action.  This module therefore provides a variety of find*Tag functions for searching
--- the list of tags by name and returning a 'Maybe' value.  The name provided to each should
--- be the constructor you are looking for in this data type.
+-- Because there are so many possibilities for tags and each 'Codec.RPM.Types.RPM' likely
+-- contains dozens of tags, it is unwieldy to write functions that pattern match on tags and
+-- take some action.  This module therefore provides a variety of find*Tag functions for
+-- searching the list of tags by name and returning a 'Maybe' value.  The name provided to
+-- each should be the constructor you are looking for in this data type.
 --
 -- To find the list of all files in the RPM, you would therefore do:
 --
@@ -388,11 +388,11 @@ data Null = Null
 -- | Attempt to create a 'Tag' based on various parameters.
 mkTag :: BS.ByteString      -- ^ The 'headerStore' containing the value of the potential 'Tag'.
       -> Int                -- ^ The number of the 'Tag', as read out of the store.  Valid numbers
-                            --   may be found in lib/rpmtag.h in the RPM source, though most
+                            --   may be found in lib\/rpmtag.h in the RPM source, though most
                             --   users will not need to know this since it will be read from the
                             --   store.
       -> Word32             -- ^ What is the type of this tag's value?  Valid numbers may be found
-                            --   in the rpmTagType_e enum in lib/rpmtag.h in the RPM source, though
+                            --   in the rpmTagType_e enum in lib\/rpmtag.h in the RPM source, though
                             --   most users will not need to know this since it will be read from
                             --   the store.  Here, it is used as a simple form of type checking.
       -> Word32             -- ^ How far into the 'headerStore' is this 'Tag's value stored?
@@ -779,10 +779,10 @@ readWords bs size conv offsets = map (\offset -> conv $ BS.take size $ BS.drop (
 readStrings :: BS.ByteString -> Word32 -> [BS.ByteString]
 readStrings bytestring count  = take (fromIntegral count) $ BS.split 0 bytestring
 
--- | Given the name of a 'Tag' and a list of 'Tag's (say, from the 'Header' of some 'RPM'),
--- find the match and return it as a 'Maybe'.  This is the most generic of the various finding
--- functions - it will return any match regardless of its type.  You are expected to know what
--- type you are looking for.
+-- | Given the name of a 'Tag' and a list of 'Tag's (say, from the 'Codec.RPM.Types.Header' of some
+-- 'Codec.RPM.Types.RPM'), find the match and return it as a 'Maybe'.  This is the most generic of
+-- the various finding functions - it will return any match regardless of its type.  You are
+-- expected to know what type you are looking for.
 findTag :: String -> [Tag] -> Maybe Tag
 findTag name = find (\t -> name == showConstr (toConstr t))
 
@@ -845,7 +845,7 @@ findWord32ListTag name tags = fromMaybe [] $ findTag name tags >>= \t -> tagValu
 -- | Given a 'Tag', return its value.  This is a helper function to be used with 'findTag',
 -- essentially as a type-safe way to cast the value into a known type.  It is used internally
 -- in all the type-specific find*Tag functions but can also be used on its own.  A function
--- to find the "Epoch" tag could be written as follows:
+-- to find the Epoch tag could be written as follows:
 --
 -- > epoch = findTag "Epoch" tags >>= \t -> tagValue t :: Maybe Word32
 tagValue :: Typeable a => Tag -> Maybe a
