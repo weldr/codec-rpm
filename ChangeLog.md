@@ -1,3 +1,7 @@
+## 0.1.2
+
+* Relax overly strict conduit-extra and text requirements.
+
 ## 0.1.1
 
 * Relax overly strict attoparsec requirement.
