@@ -2,21 +2,25 @@ dist: trusty
 sudo: required
 language: c
 
+cache:
+  directories:
+    - ~/.ghc
+    - ~/.cabal
+
 before_install:
   - wget https://haskell.org/platform/download/8.0.2/haskell-platform-8.0.2-unknown-posix--minimal-x86_64.tar.gz
   - tar -xzvf ./haskell-platform-8.0.2-unknown-posix--minimal-x86_64.tar.gz
   - sudo ./install-haskell-platform.sh
-  - cabal update && cabal install hlint
+  - travis_retry cabal update && cabal install hlint hpc-coveralls
 
 script:
   - ~/.cabal/bin/hlint .
-  - cabal install --dependencies-only --enable-tests
+  - cabal install --dependencies-only --enable-tests --force-reinstalls
   - cabal configure --enable-tests --enable-coverage --ghc-option=-DTEST
   - cabal build
   - cabal test --show-details=always
 
 after_success:
-  - cabal install hpc-coveralls
   - ~/.cabal/bin/hpc-coveralls --display-report tests
 
 notifications:
