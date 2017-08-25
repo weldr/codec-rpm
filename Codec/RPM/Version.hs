@@ -61,7 +61,7 @@ instance Ord EVR where
 
 -- | Like 'Ordering', but with support for less-than-or-equal and greater-than-or-equal.
 data DepOrdering = LT | LTE | EQ | GTE | GT
- deriving(Eq, Show)
+ deriving(Eq, Ord, Show)
 
 -- | RPM supports the concept of dependencies between packages.  Collectively, these dependencies
 -- are commonly referred to as PRCO - Provides, Requires, Conflicts, and Obsoletes.  These
@@ -86,8 +86,12 @@ data DepOrdering = LT | LTE | EQ | GTE | GT
 --
 -- It is not in the scope of this type to know what kind of relationship a 'DepRequirement'
 -- describes.
+--
+-- This type derives 'Ord' so that it can be easily be used with collection types, but the
+-- derived ordering will not make sense for the purpose of comparing requirements. Use
+-- 'satisfies' to determine if requirements match one another.
 data DepRequirement = DepRequirement T.Text (Maybe (DepOrdering, EVR))
- deriving (Eq, Show)
+ deriving (Eq, Ord, Show)
 
 -- | Compare two version numbers and return an 'Ordering'.
 vercmp :: T.Text -> T.Text -> Ordering
