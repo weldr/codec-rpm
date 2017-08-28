@@ -10,7 +10,7 @@ author:             Chris Lumens
 maintainer:         clumens@redhat.com
 license:            LGPL
 license-file:       LICENSE
-cabal-version:      >= 1.10
+cabal-version:      >= 1.18
 build-type:         Simple
 
 extra-source-files: ChangeLog.md,
