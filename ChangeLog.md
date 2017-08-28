@@ -1,3 +1,7 @@
+## 0.1.3
+
+* Derive Ord for DepRequirement.
+
 ## 0.1.2
 
 * Relax overly strict conduit-extra and text requirements.
