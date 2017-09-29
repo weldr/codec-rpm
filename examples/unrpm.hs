@@ -30,7 +30,7 @@ import           System.Environment(getArgs)
 import           System.Exit(exitFailure)
 import           System.FilePath((</>), splitFileName)
 
-import Codec.RPM.Parse(parseRPMC)
+import Codec.RPM.Conduit(parseRPMC, payloadContentsC)
 import Codec.RPM.Types(RPM(..))
 
 -- Grab an RPM from stdin and convert it into a chunked conduit of ByteStrings.  This could
@@ -73,9 +73,7 @@ processRPM path = do
     result <- runExceptT $ runConduitRes $
               getRPM path
            .| parseRPMC
-           .| payloadC
-           .| decompress Nothing
-           .| readCPIO
+           .| payloadContentsC
            .| DCC.mapM_ (liftIO . writeCpioEntry)
     either print return result
 
