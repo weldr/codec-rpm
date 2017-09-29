@@ -20,21 +20,17 @@ module Codec.RPM.Parse(
                        parseOneTag,
                        parseSection,
 #endif
-                       parseRPM,
-                       parseRPMC)
+                       parseRPM)
  where
 
 #if !MIN_VERSION_base(4,8,0)
 import           Control.Applicative((<$>))
 #endif
 import           Control.Monad(void)
-import           Control.Monad.Except(MonadError, throwError)
-import           Conduit((.|), Conduit, awaitForever, yield)
 import           Data.Attoparsec.Binary
 import           Data.Attoparsec.ByteString(Parser, anyWord8, count, take, takeByteString, word8)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as C
-import           Data.Conduit.Attoparsec(ParseError(..), conduitParserEither)
 import           Data.Maybe(mapMaybe)
 import           Prelude hiding(take)
 
@@ -145,26 +141,3 @@ parseRPM = do
         remainder = (sectionSize . headerSectionHeader) hdr `mod` 8
      in
         if remainder > 0 then fromIntegral $ 8 - remainder else 0
-
--- | Like 'parseRPM', but puts the result into a 'Conduit' as an 'Either', containing either a
--- 'ParseError' or an 'RPM'.  The result can be extracted with 'Control.Monad.Except.runExceptT',
--- like so:
---
--- > import Conduit((.|), runConduitRes, sourceFile)
--- > import Control.Monad.Except(runExceptT)
--- > result <- runExceptT $ runConduitRes $ sourceFile "some.rpm" .| parseRPMC .| someConsumer
---
--- On success, the 'RPM' record will be passed down the conduit for futher processing or
--- consumption.  Functions can be written to extract just one element out of the 'RPM' and
--- pass it along.  For instance:
---
--- > payloadC :: MonadError e m => Conduit RPM m BS.ByteStrin
--- > payloadC = awaitForever (yield . rpmArchive)
---
--- On error, the rest of the conduit will be skipped and the 'ParseError' will be returned
--- as the result to be dealt with.
-parseRPMC :: MonadError String m => Conduit C.ByteString m RPM
-parseRPMC =
-    conduitParserEither parseRPM .| consumer
- where
-    consumer = awaitForever $ either (throwError . errorMessage) (yield . snd)

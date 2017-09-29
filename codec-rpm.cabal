@@ -27,7 +27,8 @@ source-repository   head
     location:       https://github.com/weldr/codec-rpm
 
 library
-    exposed-modules:    Codec.RPM.Parse,
+    exposed-modules:    Codec.RPM.Conduit,
+                        Codec.RPM.Parse,
                         Codec.RPM.Tags,
                         Codec.RPM.Types,
                         Codec.RPM.Version
