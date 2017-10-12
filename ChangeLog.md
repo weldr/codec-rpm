@@ -1,3 +1,9 @@
+## 0.2.0
+
+* Move parseC into a new Conduit module.
+* Add payloadC and payloadContentsC.
+* parseRPMC should return a ParseError on error.
+
 ## 0.1.3
 
 * Derive Ord for DepRequirement.
