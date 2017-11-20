@@ -14,14 +14,10 @@ before_install:
   - travis_retry cabal update && cabal install hlint hpc-coveralls
 
 script:
-  - ~/.cabal/bin/hlint .
-  - cabal install --dependencies-only --enable-tests --force-reinstalls
-  - cabal configure --enable-tests --enable-coverage --ghc-option=-DTEST
-  - cabal build
-  - cabal test --show-details=always
+  - make ci
 
 after_success:
-  - ~/.cabal/bin/hpc-coveralls --display-report tests
+  - make ci_after_success
 
 notifications:
   email:
