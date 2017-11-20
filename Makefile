@@ -7,7 +7,12 @@ hlint: sandbox
 	cabal exec hlint .
 
 tests: sandbox
-	cabal install --dependencies-only --enable-tests
-	cabal configure --enable-tests --enable-coverage
+	cabal install --dependencies-only --enable-tests --force-reinstalls
+	cabal configure --enable-tests --enable-coverage --ghc-option=-DTEST
 	cabal build
-	cabal test
+	cabal test --show-details=always
+
+ci: hlint tests
+
+ci_after_success:
+	hpc-coveralls --display-report tests
