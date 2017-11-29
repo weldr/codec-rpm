@@ -1,5 +1,5 @@
 sandbox:
-	[ -d .cabal-sandbox ] || cabal sandbox init
+	[ -d .cabal-sandbox ] || cabal sandbox init && cabal update
 
 hlint: sandbox
 	[ -x .cabal-sandbox/bin/happy ] || cabal install happy
