@@ -3,7 +3,7 @@ sandbox:
 
 hlint: sandbox
 	[ -x .cabal-sandbox/bin/happy ] || cabal install happy
-	[ -x .cabal-sandbox/bin/hlint ] || cabal install hlint
+	[ -x .cabal-sandbox/bin/hlint ] || cabal install hscolour==1.24.2 hlint
 	cabal exec hlint .
 
 tests: sandbox
