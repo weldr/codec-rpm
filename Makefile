@@ -16,4 +16,4 @@ ci: hlint tests
 
 ci_after_success:
 	[ -x .cabal-sandbox/bin/hpc-coveralls ] || cabal install hpc-coveralls
-	hpc-coveralls --display-report tests
+	cabal exec hpc-coveralls --display-report tests
