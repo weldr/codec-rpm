@@ -8,7 +8,7 @@ hlint: sandbox
 
 tests: sandbox
 	cabal install --dependencies-only --enable-tests --force-reinstalls
-	cabal configure --enable-tests --enable-coverage --ghc-option=-DTEST
+	cabal configure --enable-tests --enable-coverage
 	cabal build
 	cabal test --show-details=always
 
