@@ -1,6 +1,8 @@
 ## 0.2.1
 
 * Allow newer versions of conduit, conduit-extra, lzma-conduit, and resourcet.
+* Relax minimum requirements on exceptions, HUnit, and text to fit better
+  with what is shipped in Fedora.
 * Remove the unused requirement on conduit-combinators.
 * payloadContentsC now wants an instance of MonadThrow.
 
