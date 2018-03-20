@@ -1,3 +1,9 @@
+## 0.2.1
+
+* Allow newer versions of conduit, conduit-extra, lzma-conduit, and resourcet.
+* Remove the unused requirement on conduit-combinators.
+* payloadContentsC now wants an instance of MonadThrow.
+
 ## 0.2.0
 
 * Move parseC into a new Conduit module.
