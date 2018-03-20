@@ -8,7 +8,7 @@ homepage:           https://github.com/weldr/codec-rpm
 category:           Distribution
 author:             Chris Lumens
 maintainer:         clumens@redhat.com
-license:            LGPL
+license:            LGPL-2.1
 license-file:       LICENSE
 cabal-version:      >= 1.18
 build-type:         Simple
