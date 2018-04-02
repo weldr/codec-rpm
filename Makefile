@@ -10,7 +10,7 @@ tests: sandbox
 	cabal build
 	cabal test --show-details=always
 
-ci: hlint tests
+ci: tests hlint
 
 ci_after_success:
 	[ -x .cabal-sandbox/bin/hpc-coveralls ] && cabal exec -- hpc-coveralls --display-report tests
