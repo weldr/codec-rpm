@@ -2,9 +2,7 @@ sandbox:
 	[ -d .cabal-sandbox ] || cabal sandbox init && cabal update
 
 hlint: sandbox
-	[ -x .cabal-sandbox/bin/happy ] || cabal install happy
-	[ -x .cabal-sandbox/bin/hlint ] || cabal install hscolour==1.24.2 hlint
-	cabal exec hlint .
+	[ -x .cabal-sandbox/bin/hlint ] && cabal exec hlint .
 
 tests: sandbox
 	cabal install --dependencies-only --enable-tests --force-reinstalls
@@ -15,5 +13,4 @@ tests: sandbox
 ci: hlint tests
 
 ci_after_success:
-	[ -x .cabal-sandbox/bin/hpc-coveralls ] || cabal install hpc-coveralls
-	cabal exec hpc-coveralls --display-report tests
+	[ -x .cabal-sandbox/bin/hpc-coveralls ] && cabal exec -- hpc-coveralls --display-report tests
