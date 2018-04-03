@@ -2,7 +2,12 @@ sandbox:
 	[ -d .cabal-sandbox ] || cabal sandbox init && cabal update
 
 hlint: sandbox
-	~/.cabal/bin/hlint .
+	if [ -z "$$(which hlint)" ]; then \
+		echo hlint not found in PATH - install it; \
+		exit 1; \
+	else \
+		hlint .; \
+	fi
 
 tests: sandbox
 	cabal install --dependencies-only --enable-tests --force-reinstalls
@@ -13,4 +18,9 @@ tests: sandbox
 ci: tests hlint
 
 ci_after_success:
-	~/.cabal/bin/hpc-coveralls --display-report tests
+	if [ -z "$$(which hpc-coveralls)" ]; then \
+		echo hpc-coveralls not found in PATH - install it; \
+		exit 1; \
+	else \
+		hpc-coveralls --display-report tests; \
+	fi
