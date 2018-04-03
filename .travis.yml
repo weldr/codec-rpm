@@ -11,7 +11,7 @@ before_install:
   - wget https://haskell.org/platform/download/8.0.2/haskell-platform-8.0.2-unknown-posix--minimal-x86_64.tar.gz
   - tar -xzvf ./haskell-platform-8.0.2-unknown-posix--minimal-x86_64.tar.gz
   - sudo ./install-haskell-platform.sh
-  - travis_retry cabal update && cabal install hlint hpc-coveralls
+  - travis_retry cabal update && cabal --ignore-sandbox install hlint hpc-coveralls
 
 script:
   - make ci

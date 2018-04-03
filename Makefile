@@ -2,7 +2,7 @@ sandbox:
 	[ -d .cabal-sandbox ] || cabal sandbox init && cabal update
 
 hlint: sandbox
-	[ -x .cabal-sandbox/bin/hlint ] && cabal exec hlint .
+	~/.cabal/bin/hlint .
 
 tests: sandbox
 	cabal install --dependencies-only --enable-tests --force-reinstalls
@@ -13,4 +13,4 @@ tests: sandbox
 ci: tests hlint
 
 ci_after_success:
-	[ -x .cabal-sandbox/bin/hpc-coveralls ] && cabal exec -- hpc-coveralls --display-report tests
+	~/.cabal/bin/hpc-coveralls --display-report tests
