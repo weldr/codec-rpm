@@ -19,7 +19,7 @@ module Codec.RPM.Types(RPM(..),
 import qualified Data.ByteString as BS
 import           Data.Word(Word8, Word16, Word32)
 import           Text.PrettyPrint.HughesPJClass(Pretty(..))
-import           Text.PrettyPrint((<>), ($$), nest, text, vcat)
+import           Text.PrettyPrint(($$), hcat, nest, text, vcat)
 
 import Codec.RPM.Tags
 
@@ -82,13 +82,13 @@ data Lead = Lead {
 instance Pretty Lead where
     pPrint Lead{..} =
         vcat [ text "Lead:",
-               nest 2 $ text "rpmMajor:   " <> text (show rpmMajor),
-               nest 2 $ text "rpmMinor:   " <> text (show rpmMinor),
-               nest 2 $ text "rpmType:    " <> text (show rpmType),
-               nest 2 $ text "rpmArchNum: " <> text (show rpmArchNum),
-               nest 2 $ text "rpmName:    " <> text rpmName,
-               nest 2 $ text "rpmOSNum:   " <> text (show rpmOSNum),
-               nest 2 $ text "rpmSigType: " <> text (show rpmSigType) ]
+               nest 2 $ hcat [ text "rpmMajor:   ", text (show rpmMajor) ],
+               nest 2 $ hcat [ text "rpmMinor:   ", text (show rpmMinor) ],
+               nest 2 $ hcat [ text "rpmType:    ", text (show rpmType) ],
+               nest 2 $ hcat [ text "rpmArchNum: ", text (show rpmArchNum) ],
+               nest 2 $ hcat [ text "rpmName:    ", text rpmName ],
+               nest 2 $ hcat [ text "rpmOSNum:   ", text (show rpmOSNum) ],
+               nest 2 $ hcat [ text "rpmSigType: ", text (show rpmSigType) ] ]
 
 -- | A Header represents a block of metadata.  It is used twice in the RPM - as the
 -- representation for signatures and as the representation for regular metadata.  Internally,
@@ -132,6 +132,6 @@ data SectionHeader = SectionHeader {
 instance Pretty SectionHeader where
     pPrint SectionHeader{..} =
         vcat [ text "SectionHeader:",
-               nest 2 $ text "sectionHeader: " <> text (show sectionVersion),
-               nest 2 $ text "sectionCount:  " <> text (show sectionCount),
-               nest 2 $ text "sectionSize:   " <> text (show sectionSize) ]
+               nest 2 $ hcat [ text "sectionHeader: ", text (show sectionVersion) ],
+               nest 2 $ hcat [ text "sectionCount:  ", text (show sectionCount) ],
+               nest 2 $ hcat [ text "sectionSize:   ", text (show sectionSize) ] ]
