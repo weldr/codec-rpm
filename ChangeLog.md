@@ -1,3 +1,9 @@
+## 0.2.2
+
+* Use hcat instead of <> in Codec.RPM.Types (#31).
+* Various changes for running hlint and hpc-coveralls in tests.
+* Fix -Wmissing-home-modules warnings.
+
 ## 0.2.1
 
 * Allow newer versions of conduit, conduit-extra, lzma-conduit, and resourcet.
