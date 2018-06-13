@@ -15,9 +15,14 @@ tests: sandbox
 	cabal build
 	cabal test --show-details=always
 
+
+dist: sandbox
+	cabal configure
+	cabal sdist
+
 ci: tests hlint
 
-ci_after_success:
+ci_after_success: dist
 	if [ -z "$$(which hpc-coveralls)" ]; then \
 		echo hpc-coveralls not found in PATH - install it; \
 		exit 1; \
