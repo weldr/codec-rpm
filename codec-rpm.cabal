@@ -16,6 +16,7 @@ build-type:         Simple
 extra-source-files: ChangeLog.md,
                     Makefile,
                     README.md,
+                    scripts/hpc-coveralls,
                     tests/Codec/RPM/*.hs
 
 extra-doc-files:    examples/inspect.hs,
