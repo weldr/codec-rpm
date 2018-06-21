@@ -1,5 +1,3 @@
-{-# LANGUAGE RecordWildCards #-}
-
 -- |
 -- Module: Codec.RPM.Types
 -- Copyright: (c) 2016-2017 Red Hat, Inc.

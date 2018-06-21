@@ -41,11 +41,11 @@ import           Text.PrettyPrint(text)
 
 import Codec.RPM.Internal.Numbers
 
-{-# ANN module "HLint: ignore Use camelCase" #-}
+{-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
 
 -- The character lists are actually lists of characters, ignore the suggestions
 -- to use String instead
-{-# ANN module "HLint: ignore Use String" #-}
+{-# ANN module ("HLint: ignore Use String" :: String) #-}
 
 -- | A very large data type that holds all the possibilities for the various tags that can
 -- be contained in an 'Codec.RPM.Types.RPM' 'Codec.RPM.Types.Header'.  Each tag describes
@@ -772,7 +772,7 @@ mkI18NString store ty offset count | fromIntegral (BS.length store) - offset < c
 -- I don't know how to split a ByteString up into chunks of a given size, so here's what I'm doing.  Take
 -- a list of offsets of where in the ByteString to read.  Skip to each of those offsets, grab size bytes, and
 -- convert those bytes into the type using the given conversion function.  Return that list.
-{-# ANN readWords "HLint: ignore Eta reduce" #-}
+{-# ANN readWords ("HLint: ignore Eta reduce" :: String) #-}
 readWords :: BS.ByteString -> Int -> (BS.ByteString -> a) -> [Word32] -> [a]
 readWords bs size conv offsets = map (\offset -> conv $ BS.take size $ BS.drop (fromIntegral offset) bs) offsets
 

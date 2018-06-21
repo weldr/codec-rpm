@@ -1,6 +1,3 @@
-{-# LANGUAGE MultiWayIf #-}
-{-# LANGUAGE OverloadedStrings #-}
-
 -- |
 -- Module: Codec.RPM.Parse
 -- Copyright: (c) 2017 Red Hat, Inc.

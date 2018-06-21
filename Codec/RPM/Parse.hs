@@ -39,7 +39,7 @@ import Codec.RPM.Tags(Tag, mkTag)
 import Codec.RPM.Types(Header(..), Lead(..), RPM(..), SectionHeader(..))
 
 -- "a <$> b <$> c" looks better than "a . b <$> c"
-{-# ANN parseLead "HLint: ignore Functor law" #-}
+{-# ANN parseLead ("HLint: ignore Functor law" :: String) #-}
 parseLead :: Parser Lead
 parseLead = do
     -- Verify this is an RPM by checking the first four bytes.

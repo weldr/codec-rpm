@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Codec.RPM.VersionSpec (spec) where
 
 import           Test.Hspec
