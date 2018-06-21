@@ -15,7 +15,6 @@
 
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 import           Conduit((.|), Conduit, Consumer, awaitForever, runConduit, stdinC, yield)
 import           Control.Monad(void)

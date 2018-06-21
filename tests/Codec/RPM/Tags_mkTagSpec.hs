@@ -6,7 +6,7 @@ import Codec.RPM.Tags(mkTag, Tag(..), Null(..))
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
 
-{-# ANN module "HLint: ignore Reduce duplication" #-}
+{-# ANN module ("HLint: ignore Reduce duplication" :: String) #-}
 
 spec :: Spec
 spec = describe "Codec.RPM.Tags.mkTag" $ do
