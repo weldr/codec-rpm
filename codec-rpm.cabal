@@ -54,6 +54,10 @@ library
     default-language:   Haskell2010
 
     ghc-options:        -Wall
+                        -Wincomplete-uni-patterns
+                        -Wincomplete-record-updates
+                        -Wredundant-constraints
+                        -Wcompat
 
 test-suite tests
     type:               exitcode-stdio-1.0
@@ -87,4 +91,9 @@ test-suite tests
     default-language:   Haskell2010
 
     ghc-options:        -Wall
+                        -Wincomplete-uni-patterns
+                        -Wincomplete-record-updates
+                        -Wredundant-constraints
+                        -Wcompat
+
     cpp-options:        -DTEST
