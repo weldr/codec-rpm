@@ -19,6 +19,7 @@ tests: sandbox
 dist: sandbox
 	cabal configure
 	cabal sdist
+	ln dist/codec-rpm-*.tar.gz dist/codec-rpm-latest.tar.gz
 
 ci: tests hlint
 
