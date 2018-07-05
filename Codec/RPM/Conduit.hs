@@ -52,7 +52,6 @@ payloadC = awaitForever (yield . rpmArchive)
 
 -- | Extract the package payload from an 'RPM', decompress it, and return each element of
 -- the payload as a 'Data.CPIO.Entry'.
-payloadContentsC :: (MonadResource m, MonadThrow m) => Conduit RPM m Entry
+payloadContentsC :: (MonadResource m, MonadThrow m) => Conduit RPM m C.ByteString
 payloadContentsC = payloadC
                 .| decompress Nothing
-                .| readCPIO
