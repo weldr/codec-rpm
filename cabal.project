@@ -1,0 +1,10 @@
+packages: .
+
+-- cpio-conduit-0.7.2 on hackage has an incompatibility with newer versions of
+-- base16-bytestring. A PR was merged to fix this, but
+-- a new release was never cut to hackage.
+-- Remove this when version 0.7.3 is released to hackage.
+source-repository-package
+  type: git
+  location: https://github.com/da-x/cpio-conduit
+  tag: 30d92919e82c5033fffac7b34288f5a7fd28e9be

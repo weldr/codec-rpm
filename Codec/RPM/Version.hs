@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 -- |
 -- Module: Codec.RPM.Parse
 -- Copyright: (c) 2017 Red Hat, Inc.
@@ -23,7 +24,13 @@ module Codec.RPM.Version(
 
 import           Data.Char(digitToInt, isAsciiLower, isAsciiUpper, isDigit, isSpace)
 import           Data.Maybe(fromMaybe)
+
+#if MIN_VERSION_base(4,11,0) 
+import           Data.Semigroup ()
+#else
 import           Data.Monoid((<>))
+#endif
+
 import qualified Data.Ord as Ord
 import qualified Data.Text as T
 import           Data.Word(Word32)
